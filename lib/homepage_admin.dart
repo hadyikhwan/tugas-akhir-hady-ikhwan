@@ -1,0 +1,2981 @@
+import 'dart:js_interop';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:skripsi/ecek.dart';
+import 'package:skripsi/ecek_admin.dart';
+import 'package:skripsi/editS2.dart';
+import 'package:skripsi/editS1.dart';
+import 'package:skripsi/editS3.dart';
+import 'package:skripsi/editS4.dart';
+import 'package:skripsi/editS5.dart';
+import 'package:skripsi/editS6.dart';
+import 'package:skripsi/firestore%20service/DatabaseService.dart';
+import 'package:skripsi/header.dart';
+import 'package:skripsi/footer.dart';
+
+class homepageadmin extends StatelessWidget {
+  const homepageadmin({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Philip Gilbert Portfolio',
+      home: MyHomePage(title: 'Teknologi Informasi'),
+    );
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  MyHomePage({Key? key, required this.title}) : super(key: key);
+
+  final String title;
+
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class dataUser {
+  String? id;
+  String? nama;
+  String? deskripsi;
+  String pemrogramanSkill = "";
+  String designVisualSkill = "";
+  String machineLearningSkill = "";
+  String keamananSkill = "";
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  String namaYangDiSearch = "";
+
+  List<dataUser> hasilSearch = [];
+
+  List<dataUser> seluruhDataPengguna = [];
+  List<int> noPemrograman = [];
+  List<int> noDesignVisual = [];
+  List<int> noKemanan = [];
+  List<int> noMachineLearning = [];
+
+  //bantuan
+  List<String> skillProgrammingLanguage = [];
+  List<String> skillDesignVisual = [];
+  List<String> skillSecurity = [];
+  List<String> skillMachineLearning = [];
+
+  searchNamaUser() {
+    hasilSearch.clear();
+
+    //filter nama
+    for (int i = 0; i < seluruhDataPengguna.length; i++) {
+      bool aman = false;
+      for (int j = 0; j < namaYangDiSearch.length; j++) {
+        if (namaYangDiSearch[j].toLowerCase() ==
+            seluruhDataPengguna[i].nama.toString()[j].toLowerCase()) {
+          aman = true;
+        } else {
+          aman = false;
+          break;
+        }
+      }
+      if (aman == true) {
+        hasilSearch.add(seluruhDataPengguna[i]);
+      }
+    }
+
+    for (int i = 0; i < hasilSearch.length - 1; i++) {
+      dataUser temp = new dataUser();
+      if (hitungTotalSkill(hasilSearch, i) <
+          hitungTotalSkill(hasilSearch, i + 1)) {
+        temp = hasilSearch[i];
+        hasilSearch[i] = hasilSearch[i + 1];
+        hasilSearch[i + 1] = temp;
+      }
+    }
+  }
+
+  int hitungTotalSkill(List<dataUser> dataUser, int index) {
+    int hasil = hitungKoma(dataUser[index].keamananSkill) +
+        hitungKoma(dataUser[index].designVisualSkill) +
+        hitungKoma(dataUser[index].machineLearningSkill) +
+        hitungKoma(dataUser[index].pemrogramanSkill);
+    return hasil;
+  }
+
+  int hitungKoma(String x) {
+    bool pertama = false;
+    int hasil = 0;
+    for (int i = 0; i < x.length; i++) {
+      if (!pertama) {
+        if (x[i] != '') {
+          hasil++;
+        }
+        pertama = true;
+      } else {
+        if (x[i] == ',') {
+          hasil++;
+        }
+      }
+    }
+    return hasil;
+  }
+
+  void convertingSkillSecurity(List<int> x) {
+    for (int i = 0; i < x.length; i++) {
+      switch (x[i]) {
+        case 0:
+          skillSecurity.add("IOT");
+          break;
+        case 1:
+          skillSecurity.add("Kriptografi");
+          break;
+        case 2:
+          skillSecurity.add("Firewall");
+          break;
+        case 3:
+          skillSecurity.add("Java Script");
+          break;
+        case 4:
+          skillSecurity.add("Cloud");
+          break;
+        case 5:
+          skillSecurity.add("Endpoint");
+          break;
+      }
+    }
+  }
+
+  clearData() {
+    noPemrograman.clear();
+    noKemanan.clear();
+    noDesignVisual.clear();
+    noMachineLearning.clear();
+
+    skillProgrammingLanguage.clear();
+    skillSecurity.clear();
+    skillDesignVisual.clear();
+    skillMachineLearning.clear();
+  }
+
+  void convertingSkillDesignVisual(List<int> x) {
+    for (int i = 0; i < x.length; i++) {
+      switch (x[i]) {
+        case 0:
+          skillDesignVisual.add("UI/UX Design");
+          break;
+        case 1:
+          skillDesignVisual.add("Mockup Design");
+          break;
+        case 2:
+          skillDesignVisual.add("Design Graphic");
+          break;
+        case 3:
+          skillDesignVisual.add("Logo Design");
+          break;
+        case 4:
+          skillDesignVisual.add("Game Design");
+          break;
+        case 5:
+          skillDesignVisual.add("Indutrial Design");
+          break;
+        case 6:
+          skillDesignVisual.add("Creative Design");
+          break;
+      }
+    }
+  }
+
+  void convertingSkillMachineLearning(List<int> x) {
+    for (int i = 0; i < x.length; i++) {
+      switch (x[i]) {
+        case 0:
+          skillMachineLearning.add("Classification");
+          break;
+        case 1:
+          skillMachineLearning.add("Regressioni");
+          break;
+        case 2:
+          skillMachineLearning.add("Clustering");
+          break;
+        case 3:
+          skillMachineLearning.add("Association");
+          break;
+        case 4:
+          skillMachineLearning.add("Deep Learning");
+          break;
+        case 5:
+          skillMachineLearning.add("Image Processing");
+          break;
+        case 6:
+          skillMachineLearning.add("Big Data");
+          break;
+        case 7:
+          skillMachineLearning.add("Image Classification");
+          break;
+      }
+    }
+  }
+
+  void convertingSkillProgrammingLanguage(List<int> x) {
+    for (int i = 0; i < x.length; i++) {
+      switch (x[i]) {
+        case 0:
+          skillProgrammingLanguage.add("Java");
+          break;
+        case 1:
+          skillProgrammingLanguage.add("Flutter");
+          break;
+        case 2:
+          skillProgrammingLanguage.add("Python");
+          break;
+        case 3:
+          skillProgrammingLanguage.add("Java Script");
+          break;
+        case 4:
+          skillProgrammingLanguage.add("PHP");
+          break;
+        case 5:
+          skillProgrammingLanguage.add("Kotlin");
+          break;
+        case 6:
+          skillProgrammingLanguage.add("Dart");
+          break;
+        case 7:
+          skillProgrammingLanguage.add("Golang");
+          break;
+        case 8:
+          skillProgrammingLanguage.add("Swift");
+          break;
+        case 9:
+          skillProgrammingLanguage.add("C++");
+          break;
+      }
+    }
+  }
+
+  addDataSkill() async {
+    for (int j = 0; j < seluruhDataPengguna.length; j++) {
+      await FirebaseFirestore.instance
+          .collection("User")
+          .doc(seluruhDataPengguna[j].id)
+          .collection("Skill")
+          .get()
+          .then(
+        (x) {
+          x.docs.forEach(
+            (y) {
+              switch (y.id) {
+                case "Design Visual":
+                  for (int i = 0; i < y["Skill yang dikuasai"].length; i++) {
+                    noDesignVisual.add(y["Skill yang dikuasai"][i]);
+                  }
+
+                  break;
+                case "Machine Learning":
+                  for (int i = 0; i < y["Skill yang dikuasai"].length; i++) {
+                    noMachineLearning.add(y["Skill yang dikuasai"][i]);
+                  }
+
+                  break;
+                case "Proramming Language":
+                  for (int i = 0; i < y["Skill yang dikuasai"].length; i++) {
+                    noPemrograman.add(y["Skill yang dikuasai"][i]);
+                  }
+
+                  break;
+                case "Security":
+                  for (int i = 0; i < y["Skill yang dikuasai"].length; i++) {
+                    noKemanan.add(y["Skill yang dikuasai"][i]);
+                  }
+
+                  break;
+              }
+            },
+          );
+        },
+      );
+      convertingSkillProgrammingLanguage(noPemrograman);
+      convertingSkillMachineLearning(noMachineLearning);
+      convertingSkillDesignVisual(noDesignVisual);
+      convertingSkillSecurity(noKemanan);
+      for (int i = 0; i < skillMachineLearning.length; i++) {
+        if (i != skillMachineLearning.length - 1) {
+          seluruhDataPengguna[j].machineLearningSkill +=
+              skillMachineLearning[i] + ", ";
+        } else {
+          seluruhDataPengguna[j].machineLearningSkill +=
+              skillMachineLearning[i];
+        }
+      }
+
+      for (int i = 0; i < skillDesignVisual.length; i++) {
+        if (i != skillDesignVisual.length - 1) {
+          seluruhDataPengguna[j].designVisualSkill +=
+              skillDesignVisual[i] + ", ";
+        } else {
+          seluruhDataPengguna[j].designVisualSkill += skillDesignVisual[i];
+        }
+      }
+      for (int i = 0; i < skillProgrammingLanguage.length; i++) {
+        if (i != skillProgrammingLanguage.length - 1) {
+          seluruhDataPengguna[j].pemrogramanSkill +=
+              skillProgrammingLanguage[i] + ", ";
+        } else {
+          seluruhDataPengguna[j].pemrogramanSkill +=
+              skillProgrammingLanguage[i];
+        }
+      }
+
+      for (int i = 0; i < skillSecurity.length; i++) {
+        if (i != skillSecurity.length - 1) {
+          seluruhDataPengguna[j].keamananSkill += skillSecurity[i] + ", ";
+        } else {
+          seluruhDataPengguna[j].keamananSkill += skillSecurity[i];
+        }
+      }
+
+      clearData();
+    }
+  }
+
+  bool isFirst = false;
+  getNothing() {}
+  getData() async {
+    await FirebaseFirestore.instance.collection("User").get().then(
+      (value) {
+        value.docs.forEach(
+          (element) async {
+            if (element['username'].toString() != "Admin") {
+              seluruhDataPengguna.add(dataUser());
+              seluruhDataPengguna[seluruhDataPengguna.length - 1].id =
+                  element.id;
+              seluruhDataPengguna[seluruhDataPengguna.length - 1].nama =
+                  (element['username'].toString());
+              seluruhDataPengguna[seluruhDataPengguna.length - 1].deskripsi =
+                  (element['deskripsi'].toString());
+            }
+          },
+        );
+      },
+    );
+    await addDataSkill();
+
+    for (int i = 0; i < seluruhDataPengguna.length - 1; i++) {
+      dataUser temp = new dataUser();
+      if (hitungTotalSkill(seluruhDataPengguna, i) <
+          hitungTotalSkill(seluruhDataPengguna, i + 1)) {
+        temp = seluruhDataPengguna[i];
+        seluruhDataPengguna[i] = seluruhDataPengguna[i + 1];
+        seluruhDataPengguna[i + 1] = temp;
+      }
+    }
+
+    for (int i = 0;
+        seluruhDataPengguna.length >= 5
+            ? i < 5
+            : i < seluruhDataPengguna.length;
+        i++) {
+      hasilSearch.add(seluruhDataPengguna[i]);
+    }
+
+    isFirst = true;
+  }
+
+  int x = 1;
+  List<Widget> halamanPilihan = [
+    EditS1(),
+    editS2(),
+    editS3(),
+    editS4(),
+    editS5(),
+    editS6(),
+    editS2(),
+  ];
+
+  bool showFilter = false; // State untuk mengelola visibilitas filter
+  final Map<String, bool> _selectedSoftware = {};
+  final Map<String, bool> _selectedSkills = {};
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Color.fromARGB(255, 249, 249, 255),
+      appBar: header(),
+      body: FutureBuilder(
+          future: isFirst ? getNothing() : getData(),
+          builder: (context, snapshot) {
+            if (isFirst) {
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 32),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                RichText(
+                                    text: TextSpan(
+                                  text:
+                                      'Digital Portfolio Website for Information Technology Department Students',
+                                  style: TextStyle(
+                                    fontSize: 55,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color.fromARGB(255, 0, 0, 0),
+                                    height:
+                                        1.2, // Mengatur jarak antar baris (1.5 kali tinggi font)
+                                  ),
+                                )),
+                                SizedBox(
+                                  height: 15,
+                                ),
+                                RichText(
+                                  text: TextSpan(
+                                    text:
+                                        'This platform is designed to make it easy for students to digitize and showcase their portfolios. Here, students can effortlessly compile and present their best work, making it accessible to peers, faculty, and potential employers.',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.normal,
+                                      color: Color.fromARGB(136, 70, 70, 70),
+                                      height:
+                                          1.5, // Mengatur jarak antar baris (1.5 kali tinggi font)
+                                    ),
+                                    children: <TextSpan>[],
+                                  ),
+                                  textAlign: TextAlign.left,
+                                  maxLines: 5,
+                                  overflow: TextOverflow.visible,
+                                ),
+                                SizedBox(height: 20),
+                                ElevatedButton.icon(
+                                  onPressed: () {
+                                    Databaseservice(
+                                            userID: FirebaseAuth
+                                                .instance.currentUser!.uid)
+                                        .addTest("kontol");
+                                  },
+                                  label: Text('Get Started'),
+                                  icon: Icon(Icons.arrow_forward_rounded),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.blue,
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.zero,
+                                      side: BorderSide(
+                                          width: 2, color: Colors.blue),
+                                    ),
+                                    textStyle: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    minimumSize: Size(150, 50),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            width: 550,
+                            height: 550,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage(
+                                  "assets/posterhomepage1.png",
+                                ),
+                                fit: BoxFit.fitWidth,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 100,
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(vertical: 20.0),
+                      padding: EdgeInsets.symmetric(horizontal: 20.0),
+                      width: MediaQuery.of(context).size.width *
+                          0.6, // Sesuaikan lebar konten utama
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(30.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                showFilter =
+                                    !showFilter; // Toggle visibilitas filter
+                              });
+                            },
+                            child: Text(
+                              'Filter',
+                              style: TextStyle(fontSize: 18.0),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: Colors.blue,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
+                              padding: EdgeInsets.symmetric(horizontal: 20.0),
+                            ),
+                          ),
+                          SizedBox(width: 20.0),
+                          Expanded(
+                            child: TextField(
+                              decoration: InputDecoration(
+                                hintText: 'Search...',
+                                border: InputBorder.none,
+                              ),
+                              onChanged: (value) {
+                                namaYangDiSearch = value;
+                                print("data yang tersimpan : " +
+                                    namaYangDiSearch);
+                              },
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                for (int i = 0;
+                                    i < seluruhDataPengguna.length;
+                                    i++) {
+                                  print("nama pengguna no " +
+                                      i.toString() +
+                                      " " +
+                                      seluruhDataPengguna[i].nama.toString());
+                                }
+                                searchNamaUser();
+                                showFilter = false;
+                              });
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Icon(
+                                Icons.search,
+                                color: Colors.blue,
+                                size: 30.0,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Visibility(
+                      visible:
+                          showFilter, // Tampilkan hanya jika showFilter true
+                      child: Container(
+                        width: 760,
+                        height: 1000,
+                        padding: EdgeInsets.all(25.0),
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 255, 255, 255),
+                          borderRadius: BorderRadius.circular(10.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 2,
+                              blurRadius: 5,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Design Visual
+
+                            Text(
+                              '1. Soft Skill',
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blue),
+                            ),
+                            SizedBox(height: 10),
+                            Wrap(
+                              spacing: 14,
+                              runSpacing: 10,
+                              children: [
+                                SkillContainer(
+                                  text: 'UI/UX Design',
+                                  isSelected:
+                                      _selectedSkills['UI/UX Design'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSkills['UI/UX Design'] =
+                                          !(_selectedSkills['UI/UX Design'] ??
+                                              false);
+                                    });
+                                  },
+                                ),
+                                SkillContainer(
+                                  text: 'Mockup Design',
+                                  isSelected:
+                                      _selectedSkills['Mockup Design'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSkills['Mockup Design'] =
+                                          !(_selectedSkills['Mockup Design'] ??
+                                              false);
+                                    });
+                                  },
+                                ),
+                                SkillContainer(
+                                  text: 'Design Graphic',
+                                  isSelected:
+                                      _selectedSkills['Design Graphic'] ??
+                                          false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSkills['Design Graphic'] =
+                                          !(_selectedSkills['Design Graphic'] ??
+                                              false);
+                                    });
+                                  },
+                                ),
+                                SkillContainer(
+                                  text: 'Logo Design',
+                                  isSelected:
+                                      _selectedSkills['Logo Design'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSkills['Logo Design'] =
+                                          !(_selectedSkills['Logo Design'] ??
+                                              false);
+                                    });
+                                  },
+                                ),
+                                SkillContainer(
+                                  text: 'Game Design',
+                                  isSelected:
+                                      _selectedSkills['Game Design'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSkills['Game Design'] =
+                                          !(_selectedSkills['Game Design'] ??
+                                              false);
+                                    });
+                                  },
+                                ),
+                                SkillContainer(
+                                  text: 'Industrial Design',
+                                  isSelected:
+                                      _selectedSkills['Industrial Design'] ??
+                                          false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSkills['Industrial Design'] =
+                                          !(_selectedSkills[
+                                                  'Industrial Design'] ??
+                                              false);
+                                    });
+                                  },
+                                ),
+                                SkillContainer(
+                                  text: 'Creative Design',
+                                  isSelected:
+                                      _selectedSkills['Creative Design'] ??
+                                          false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSkills['Creative Design'] =
+                                          !(_selectedSkills[
+                                                  'Creative Design'] ??
+                                              false);
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 10),
+
+                            // Development
+                            // Text(
+                            //   '2. Programming Language',
+                            //   style: TextStyle(
+                            //       fontSize: 12,
+                            //       fontWeight: FontWeight.bold,
+                            //       color: Colors.blue),
+                            // ),
+                            SizedBox(height: 10),
+                            Wrap(
+                              spacing: 14,
+                              runSpacing: 10,
+                              children: [
+                                SkillContainer(
+                                  text: 'Java',
+                                  isSelected: _selectedSkills['Java'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSkills['Java'] =
+                                          !(_selectedSkills['Java'] ?? false);
+                                    });
+                                  },
+                                ),
+                                SkillContainer(
+                                  text: 'Flutter',
+                                  isSelected:
+                                      _selectedSkills['Flutter'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSkills['Flutter'] =
+                                          !(_selectedSkills['Flutter'] ??
+                                              false);
+                                    });
+                                  },
+                                ),
+                                SkillContainer(
+                                  text: 'Python',
+                                  isSelected:
+                                      _selectedSkills['Python'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSkills['Python'] =
+                                          !(_selectedSkills['Python'] ?? false);
+                                    });
+                                  },
+                                ),
+                                SkillContainer(
+                                  text: 'Java Script',
+                                  isSelected:
+                                      _selectedSkills['Java Script'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSkills['Java Script'] =
+                                          !(_selectedSkills['Java Script'] ??
+                                              false);
+                                    });
+                                  },
+                                ),
+                                SkillContainer(
+                                  text: 'PHP',
+                                  isSelected: _selectedSkills['PHP'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSkills['PHP'] =
+                                          !(_selectedSkills['PHP'] ?? false);
+                                    });
+                                  },
+                                ),
+                                SkillContainer(
+                                  text: 'Kotlin',
+                                  isSelected:
+                                      _selectedSkills['Kotlin'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSkills['Kotlin'] =
+                                          !(_selectedSkills['Kotlin'] ?? false);
+                                    });
+                                  },
+                                ),
+                                SkillContainer(
+                                  text: 'Dart',
+                                  isSelected: _selectedSkills['Dart'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSkills['Dart'] =
+                                          !(_selectedSkills['Dart'] ?? false);
+                                    });
+                                  },
+                                ),
+                                SkillContainer(
+                                  text: 'Golang',
+                                  isSelected:
+                                      _selectedSkills['Golang'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSkills['Golang'] =
+                                          !(_selectedSkills['Golang'] ?? false);
+                                    });
+                                  },
+                                ),
+                                SkillContainer(
+                                  text: 'Swift',
+                                  isSelected: _selectedSkills['Swift'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSkills['Swift'] =
+                                          !(_selectedSkills['Swift'] ?? false);
+                                    });
+                                  },
+                                ),
+                                SkillContainer(
+                                  text: 'C++',
+                                  isSelected: _selectedSkills['C++'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSkills['C++'] =
+                                          !(_selectedSkills['C++'] ?? false);
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 10),
+
+                            // Machine Learning
+                            // Text(
+                            //   '3. Machine Learning',
+                            //   style: TextStyle(
+                            //       fontSize: 12,
+                            //       fontWeight: FontWeight.bold,
+                            //       color: Colors.blue),
+                            // ),
+                            SizedBox(height: 10),
+                            Wrap(
+                              spacing: 14,
+                              runSpacing: 10,
+                              children: [
+                                SkillContainer(
+                                  text: 'Clasification',
+                                  isSelected:
+                                      _selectedSkills['Clasification'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSkills['Clasification'] =
+                                          !(_selectedSkills['Clasification'] ??
+                                              false);
+                                    });
+                                  },
+                                ),
+                                SkillContainer(
+                                  text: 'Regression',
+                                  isSelected:
+                                      _selectedSkills['Regression'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSkills['Regression'] =
+                                          !(_selectedSkills['Regression'] ??
+                                              false);
+                                    });
+                                  },
+                                ),
+                                SkillContainer(
+                                  text: 'Clustering',
+                                  isSelected:
+                                      _selectedSkills['Clustering'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSkills['Clustering'] =
+                                          !(_selectedSkills['Clustering'] ??
+                                              false);
+                                    });
+                                  },
+                                ),
+                                SkillContainer(
+                                  text: 'Association',
+                                  isSelected:
+                                      _selectedSkills['Association'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSkills['Association'] =
+                                          !(_selectedSkills['Association'] ??
+                                              false);
+                                    });
+                                  },
+                                ),
+                                SkillContainer(
+                                  text: 'Deep Learning',
+                                  isSelected:
+                                      _selectedSkills['Deep Learning'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSkills['Deep Learning'] =
+                                          !(_selectedSkills['Deep Learning'] ??
+                                              false);
+                                    });
+                                  },
+                                ),
+                                SkillContainer(
+                                  text: 'jancok',
+                                  isSelected:
+                                      _selectedSkills['jancok'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSkills['jancok'] =
+                                          !(_selectedSkills['jancok'] ?? false);
+                                    });
+                                  },
+                                ),
+                                SkillContainer(
+                                  text: 'Dart',
+                                  isSelected: _selectedSkills['Dart'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSkills['Dart'] =
+                                          !(_selectedSkills['Dart'] ?? false);
+                                    });
+                                  },
+                                ),
+                                SkillContainer(
+                                  text: 'Golang',
+                                  isSelected:
+                                      _selectedSkills['Golang'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSkills['Golang'] =
+                                          !(_selectedSkills['Golang'] ?? false);
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 10),
+
+                            // Security
+                            // Text(
+                            //   '4. Security',
+                            //   style: TextStyle(
+                            //       fontSize: 12,
+                            //       fontWeight: FontWeight.bold,
+                            //       color: Colors.blue),
+                            // ),
+                            SizedBox(height: 10),
+                            Wrap(
+                              spacing: 14,
+                              runSpacing: 10,
+                              children: [
+                                SkillContainer(
+                                  text: 'Java',
+                                  isSelected: _selectedSkills['Java'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSkills['Java'] =
+                                          !(_selectedSkills['Java'] ?? false);
+                                    });
+                                  },
+                                ),
+                                SkillContainer(
+                                  text: 'Flutter',
+                                  isSelected:
+                                      _selectedSkills['Flutter'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSkills['Flutter'] =
+                                          !(_selectedSkills['Flutter'] ??
+                                              false);
+                                    });
+                                  },
+                                ),
+                                SkillContainer(
+                                  text: 'Python',
+                                  isSelected:
+                                      _selectedSkills['Python'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSkills['Python'] =
+                                          !(_selectedSkills['Python'] ?? false);
+                                    });
+                                  },
+                                ),
+                                SkillContainer(
+                                  text: 'Java Script',
+                                  isSelected:
+                                      _selectedSkills['Java Script'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSkills['Java Script'] =
+                                          !(_selectedSkills['Java Script'] ??
+                                              false);
+                                    });
+                                  },
+                                ),
+                                SkillContainer(
+                                  text: 'PHP',
+                                  isSelected: _selectedSkills['PHP'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSkills['PHP'] =
+                                          !(_selectedSkills['PHP'] ?? false);
+                                    });
+                                  },
+                                ),
+                                SkillContainer(
+                                  text: 'Kotlin',
+                                  isSelected:
+                                      _selectedSkills['Kotlin'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSkills['Kotlin'] =
+                                          !(_selectedSkills['Kotlin'] ?? false);
+                                    });
+                                  },
+                                ),
+                                SkillContainer(
+                                  text: 'Dart',
+                                  isSelected: _selectedSkills['Dart'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSkills['Dart'] =
+                                          !(_selectedSkills['Dart'] ?? false);
+                                    });
+                                  },
+                                ),
+                                SkillContainer(
+                                  text: 'Golang',
+                                  isSelected:
+                                      _selectedSkills['Golang'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSkills['Golang'] =
+                                          !(_selectedSkills['Golang'] ?? false);
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+
+                            SizedBox(height: 40),
+                            Text(
+                              '2. Software Skill',
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blue),
+                            ),
+                            SizedBox(height: 10),
+                            Wrap(
+                              spacing: 20,
+                              runSpacing: 10,
+                              children: [
+                                SoftwareContainer(
+                                  assetPath: 'assets/logo/illustrator.png',
+                                  isSelected: _selectedSoftware[''] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSoftware[''] =
+                                          !(_selectedSoftware[''] ?? false);
+                                    });
+                                  },
+                                ),
+                                SoftwareContainer(
+                                  assetPath: 'assets/logo/photoshop.png',
+                                  isSelected:
+                                      _selectedSoftware['photoshop'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSoftware['photoshop'] =
+                                          !(_selectedSoftware['photoshop'] ??
+                                              false);
+                                    });
+                                  },
+                                ),
+                                SoftwareContainer(
+                                  assetPath: 'assets/logo/coreldraw.png',
+                                  isSelected:
+                                      _selectedSoftware['coreldraw'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSoftware['coreldraw'] =
+                                          !(_selectedSoftware['coreldraw'] ??
+                                              false);
+                                    });
+                                  },
+                                ),
+                                SoftwareContainer(
+                                  assetPath: 'assets/logo/sketch.png',
+                                  isSelected:
+                                      _selectedSoftware['sketch'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSoftware['sketch'] =
+                                          !(_selectedSoftware['sketch'] ??
+                                              false);
+                                    });
+                                  },
+                                ),
+                                SoftwareContainer(
+                                  assetPath: 'assets/logo/adobeindesign.png',
+                                  isSelected:
+                                      _selectedSoftware['adobeindesign'] ??
+                                          false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSoftware['adobeindesign'] =
+                                          !(_selectedSoftware[
+                                                  'adobeindesign'] ??
+                                              false);
+                                    });
+                                  },
+                                ),
+                                SoftwareContainer(
+                                  assetPath: 'assets/logo/gimp.png',
+                                  isSelected:
+                                      _selectedSoftware['gimp'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSoftware['gimp'] =
+                                          !(_selectedSoftware['gimp'] ?? false);
+                                    });
+                                  },
+                                ),
+                                SoftwareContainer(
+                                  assetPath: 'assets/logo/figma.png',
+                                  isSelected:
+                                      _selectedSoftware['figma'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSoftware['figma'] =
+                                          !(_selectedSoftware['figma'] ??
+                                              false);
+                                    });
+                                  },
+                                ),
+                                SoftwareContainer(
+                                  assetPath: 'assets/logo/affinity.png',
+                                  isSelected:
+                                      _selectedSoftware['affinity'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSoftware['affinity'] =
+                                          !(_selectedSoftware['affinity'] ??
+                                              false);
+                                    });
+                                  },
+                                ),
+                                SoftwareContainer(
+                                  assetPath: 'assets/logo/sketchup.png',
+                                  isSelected:
+                                      _selectedSoftware['sketchup'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSoftware['sketchup'] =
+                                          !(_selectedSoftware['sketchup'] ??
+                                              false);
+                                    });
+                                  },
+                                ),
+                                SoftwareContainer(
+                                  assetPath: 'assets/logo/autocad.png',
+                                  isSelected:
+                                      _selectedSoftware['autocad'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSoftware['autocad'] =
+                                          !(_selectedSoftware['autocad'] ??
+                                              false);
+                                    });
+                                  },
+                                ),
+                                SoftwareContainer(
+                                  assetPath: 'assets/logo/inkscape.png',
+                                  isSelected:
+                                      _selectedSoftware['inkscape'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSoftware['inkscape'] =
+                                          !(_selectedSoftware['inkscape'] ??
+                                              false);
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 10),
+
+                            // Development
+                            Text(
+                              '2. Vidio Editor',
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blue),
+                            ),
+                            SizedBox(height: 10),
+                            Wrap(
+                              spacing: 20,
+                              runSpacing: 10,
+                              children: [
+                                SoftwareContainer(
+                                  assetPath: 'assets/icons/icon.png',
+                                  isSelected:
+                                      _selectedSoftware['Java'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSoftware['Java'] =
+                                          !(_selectedSoftware['Java'] ?? false);
+                                    });
+                                  },
+                                ),
+                                SoftwareContainer(
+                                  assetPath: 'assets/icons/icon.png',
+                                  isSelected:
+                                      _selectedSoftware['Flutter'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSoftware['Flutter'] =
+                                          !(_selectedSoftware['Flutter'] ??
+                                              false);
+                                    });
+                                  },
+                                ),
+                                SoftwareContainer(
+                                  assetPath: 'assets/icons/icon.png',
+                                  isSelected:
+                                      _selectedSoftware['Python'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSoftware['Python'] =
+                                          !(_selectedSoftware['Python'] ??
+                                              false);
+                                    });
+                                  },
+                                ),
+                                SoftwareContainer(
+                                  assetPath: 'assets/icons/icon.png',
+                                  isSelected:
+                                      _selectedSoftware['Java Script'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSoftware['Java Script'] =
+                                          !(_selectedSoftware['Java Script'] ??
+                                              false);
+                                    });
+                                  },
+                                ),
+                                SoftwareContainer(
+                                  assetPath: 'assets/icons/icon.png',
+                                  isSelected: _selectedSoftware['PHP'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSoftware['PHP'] =
+                                          !(_selectedSoftware['PHP'] ?? false);
+                                    });
+                                  },
+                                ),
+                                SoftwareContainer(
+                                  assetPath: 'assets/icons/icon.png',
+                                  isSelected:
+                                      _selectedSoftware['Kotlin'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSoftware['Kotlin'] =
+                                          !(_selectedSoftware['Kotlin'] ??
+                                              false);
+                                    });
+                                  },
+                                ),
+                                SoftwareContainer(
+                                  assetPath: 'assets/icons/icon.png',
+                                  isSelected:
+                                      _selectedSoftware['Dart'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSoftware['Dart'] =
+                                          !(_selectedSoftware['Dart'] ?? false);
+                                    });
+                                  },
+                                ),
+                                SoftwareContainer(
+                                  assetPath: 'assets/icons/icon.png',
+                                  isSelected:
+                                      _selectedSoftware['Golang'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSoftware['Golang'] =
+                                          !(_selectedSoftware['Golang'] ??
+                                              false);
+                                    });
+                                  },
+                                ),
+                                SoftwareContainer(
+                                  assetPath: 'assets/icons/icon.png',
+                                  isSelected:
+                                      _selectedSoftware['Swift'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSoftware['Swift'] =
+                                          !(_selectedSoftware['Swift'] ??
+                                              false);
+                                    });
+                                  },
+                                ),
+                                SoftwareContainer(
+                                  assetPath: 'assets/icons/icon.png',
+                                  isSelected: _selectedSoftware['C++'] ?? false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSoftware['C++'] =
+                                          !(_selectedSoftware['C++'] ?? false);
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 10),
+
+                            // Machine Learning
+                            Text(
+                              '3. Machine Learning',
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blue),
+                            ),
+                            SizedBox(height: 10),
+                            Wrap(
+                              spacing: 20,
+                              runSpacing: 10,
+                              children: [
+                                SoftwareContainer(
+                                  assetPath: 'assets/icons/icon.png',
+                                  isSelected:
+                                      _selectedSoftware['Data Analysis'] ??
+                                          false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSoftware['Data Analysis'] =
+                                          !(_selectedSoftware[
+                                                  'Data Analysis'] ??
+                                              false);
+                                    });
+                                  },
+                                ),
+                                SoftwareContainer(
+                                  assetPath: 'assets/icons/icon.png',
+                                  isSelected:
+                                      _selectedSoftware['Computer Vision'] ??
+                                          false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSoftware['Computer Vision'] =
+                                          !(_selectedSoftware[
+                                                  'Computer Vision'] ??
+                                              false);
+                                    });
+                                  },
+                                ),
+                                SoftwareContainer(
+                                  assetPath: 'assets/icons/icon.png',
+                                  isSelected: _selectedSoftware[
+                                          'Natural Language Processing'] ??
+                                      false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSoftware[
+                                              'Natural Language Processing'] =
+                                          !(_selectedSoftware[
+                                                  'Natural Language Processing'] ??
+                                              false);
+                                    });
+                                  },
+                                ),
+                                SoftwareContainer(
+                                  assetPath: 'assets/icons/icon.png',
+                                  isSelected:
+                                      _selectedSoftware['Deep Learning'] ??
+                                          false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSoftware['Deep Learning'] =
+                                          !(_selectedSoftware[
+                                                  'Deep Learning'] ??
+                                              false);
+                                    });
+                                  },
+                                ),
+                                SoftwareContainer(
+                                  assetPath: 'assets/icons/icon.png',
+                                  isSelected:
+                                      _selectedSoftware['Neural Networks'] ??
+                                          false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSoftware['Neural Networks'] =
+                                          !(_selectedSoftware[
+                                                  'Neural Networks'] ??
+                                              false);
+                                    });
+                                  },
+                                ),
+                                SoftwareContainer(
+                                  assetPath: 'assets/icons/icon.png',
+                                  isSelected: _selectedSoftware[
+                                          'Reinforcement Learning'] ??
+                                      false,
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedSoftware[
+                                              'Reinforcement Learning'] =
+                                          !(_selectedSoftware[
+                                                  'Reinforcement Learning'] ??
+                                              false);
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    Container(
+                      height: 400,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            for (int i = 0; i < hasilSearch.length; i++)
+                              Column(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => MyAppadmin(id: hasilSearch[i].id!,)));
+                                    },
+                                    child: Container(
+                                      width: 650,
+                                      height: 130,
+                                      padding: EdgeInsets.all(16.0),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(12.0),
+                                        border: Border.all(
+                                            color: Colors.blue, width: 1),
+                                      ),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  hasilSearch[i].nama!,
+                                                  style: TextStyle(
+                                                    color: Color(0xFF6372F5),
+                                                    fontSize: 16.0,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                SizedBox(height: 8.0),
+                                                Container(
+                                                  height: 50,
+                                                  child: SingleChildScrollView(
+                                                    child: Text(
+                                                      hasilSearch[i].deskripsi!,
+                                                      style: TextStyle(
+                                                        color: Colors.grey,
+                                                        fontSize: 12.0,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                    
+                                          VerticalDivider(
+                                            color: Color(0xFF6372F5),
+                                            thickness: 4.0,
+                                          ),
+                                          SizedBox(
+                                              width:
+                                                  10.0), // Space to the right of the divider
+                                    
+                                          Expanded(
+                                            child: Container(
+                                              height: 120,
+                                              child: SingleChildScrollView(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    RichText(
+                                                      text: TextSpan(
+                                                        children: [
+                                                          TextSpan(
+                                                            text:
+                                                                'Pemograman web & mobile: ',
+                                                            style: TextStyle(
+                                                              color: Color(
+                                                                  0xFF6372F5),
+                                                              fontSize: 12.0,
+                                                              fontWeight:
+                                                                  FontWeight.bold,
+                                                            ),
+                                                          ),
+                                                          TextSpan(
+                                                            text: hasilSearch[i]
+                                                                .pemrogramanSkill,
+                                                            style: TextStyle(
+                                                              color: Colors.grey,
+                                                              fontSize: 12.0,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    SizedBox(height: 4.0),
+                                                    RichText(
+                                                      text: TextSpan(
+                                                        children: [
+                                                          TextSpan(
+                                                            text:
+                                                                'Design Visual: ',
+                                                            style: TextStyle(
+                                                              color: Color(
+                                                                  0xFF6372F5),
+                                                              fontSize: 12.0,
+                                                              fontWeight:
+                                                                  FontWeight.bold,
+                                                            ),
+                                                          ),
+                                                          TextSpan(
+                                                            text: hasilSearch[i]
+                                                                .designVisualSkill,
+                                                            style: TextStyle(
+                                                              color: Colors.grey,
+                                                              fontSize: 12.0,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    SizedBox(height: 4.0),
+                                                    RichText(
+                                                      text: TextSpan(
+                                                        children: [
+                                                          TextSpan(
+                                                            text:
+                                                                'Keamanan Jaringan: ',
+                                                            style: TextStyle(
+                                                              color: Color(
+                                                                  0xFF6372F5),
+                                                              fontSize: 12.0,
+                                                              fontWeight:
+                                                                  FontWeight.bold,
+                                                            ),
+                                                          ),
+                                                          TextSpan(
+                                                            text: hasilSearch[i]
+                                                                .keamananSkill,
+                                                            style: TextStyle(
+                                                              color: Colors.grey,
+                                                              fontSize: 12.0,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    SizedBox(height: 4.0),
+                                                    RichText(
+                                                      text: TextSpan(
+                                                        children: [
+                                                          TextSpan(
+                                                            text:
+                                                                'Machine Learning: ',
+                                                            style: TextStyle(
+                                                              color: Color(
+                                                                  0xFF6372F5),
+                                                              fontSize: 12.0,
+                                                              fontWeight:
+                                                                  FontWeight.bold,
+                                                            ),
+                                                          ),
+                                                          TextSpan(
+                                                            text: hasilSearch[i]
+                                                                .machineLearningSkill,
+                                                            style: TextStyle(
+                                                              color: Colors.grey,
+                                                              fontSize: 12.0,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 15,
+                                  )
+                                ],
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 100,
+                    ),
+                    footer(),
+                  ],
+                ),
+              );
+            } else {
+              if (snapshot.connectionState == ConnectionState.done) {
+                addDataSkill();
+                return SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 32),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  RichText(
+                                      text: TextSpan(
+                                    text:
+                                        'Digital Portfolio Website for Information Technology Department Students',
+                                    style: TextStyle(
+                                      fontSize: 55,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color.fromARGB(255, 0, 0, 0),
+                                      height:
+                                          1.2, // Mengatur jarak antar baris (1.5 kali tinggi font)
+                                    ),
+                                  )),
+                                  SizedBox(
+                                    height: 15,
+                                  ),
+                                  RichText(
+                                    text: TextSpan(
+                                      text:
+                                          'This platform is designed to make it easy for students to digitize and showcase their portfolios. Here, students can effortlessly compile and present their best work, making it accessible to peers, faculty, and potential employers.',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.normal,
+                                        color: Color.fromARGB(136, 70, 70, 70),
+                                        height:
+                                            1.5, // Mengatur jarak antar baris (1.5 kali tinggi font)
+                                      ),
+                                      children: <TextSpan>[],
+                                    ),
+                                    textAlign: TextAlign.left,
+                                    maxLines: 5,
+                                    overflow: TextOverflow.visible,
+                                  ),
+                                  SizedBox(height: 20),
+                                  ElevatedButton.icon(
+                                    onPressed: () {
+                                      Databaseservice(
+                                              userID: FirebaseAuth
+                                                  .instance.currentUser!.uid)
+                                          .addTest("kontol");
+                                    },
+                                    label: Text('Get Started'),
+                                    icon: Icon(Icons.arrow_forward_rounded),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.blue,
+                                      foregroundColor: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.zero,
+                                        side: BorderSide(
+                                            width: 2, color: Colors.blue),
+                                      ),
+                                      textStyle: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                      minimumSize: Size(150, 50),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              width: 550,
+                              height: 550,
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage(
+                                    "assets/posterhomepage1.png",
+                                  ),
+                                  fit: BoxFit.fitWidth,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 100,
+                      ),
+                      Container(
+                        margin: EdgeInsets.symmetric(vertical: 20.0),
+                        padding: EdgeInsets.symmetric(horizontal: 20.0),
+                        width: MediaQuery.of(context).size.width *
+                            0.6, // Sesuaikan lebar konten utama
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(30.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 2,
+                              blurRadius: 5,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  showFilter =
+                                      !showFilter; // Toggle visibilitas filter
+                                });
+                              },
+                              child: Text(
+                                'Filter',
+                                style: TextStyle(fontSize: 18.0),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                backgroundColor: Colors.blue,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30.0),
+                                ),
+                                padding: EdgeInsets.symmetric(horizontal: 20.0),
+                              ),
+                            ),
+                            SizedBox(width: 20.0),
+                            Expanded(
+                              child: TextField(
+                                decoration: InputDecoration(
+                                  hintText: 'Search...',
+                                  border: InputBorder.none,
+                                ),
+                                onChanged: (value) {
+                                  namaYangDiSearch = value;
+                                  print("data yang tersimpan : " +
+                                      namaYangDiSearch);
+                                },
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  for (int i = 0;
+                                      i < seluruhDataPengguna.length;
+                                      i++) {
+                                    print("nama pengguna no " +
+                                        i.toString() +
+                                        " " +
+                                        seluruhDataPengguna[i].nama.toString());
+                                  }
+                                  searchNamaUser();
+                                  showFilter = false;
+                                });
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Icon(
+                                  Icons.search,
+                                  color: Colors.blue,
+                                  size: 30.0,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Visibility(
+                        visible:
+                            showFilter, // Tampilkan hanya jika showFilter true
+                        child: Container(
+                          width: 760,
+                          height: 1000,
+                          padding: EdgeInsets.all(25.0),
+                          decoration: BoxDecoration(
+                            color: const Color.fromARGB(255, 255, 255, 255),
+                            borderRadius: BorderRadius.circular(10.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 2,
+                                blurRadius: 5,
+                                offset: Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Design Visual
+
+                              Text(
+                                '1. Soft Skill',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.blue),
+                              ),
+                              SizedBox(height: 10),
+                              Wrap(
+                                spacing: 14,
+                                runSpacing: 10,
+                                children: [
+                                  SkillContainer(
+                                    text: 'UI/UX Design',
+                                    isSelected:
+                                        _selectedSkills['UI/UX Design'] ??
+                                            false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSkills['UI/UX Design'] =
+                                            !(_selectedSkills['UI/UX Design'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SkillContainer(
+                                    text: 'Mockup Design',
+                                    isSelected:
+                                        _selectedSkills['Mockup Design'] ??
+                                            false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSkills['Mockup Design'] =
+                                            !(_selectedSkills[
+                                                    'Mockup Design'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SkillContainer(
+                                    text: 'Design Graphic',
+                                    isSelected:
+                                        _selectedSkills['Design Graphic'] ??
+                                            false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSkills['Design Graphic'] =
+                                            !(_selectedSkills[
+                                                    'Design Graphic'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SkillContainer(
+                                    text: 'Logo Design',
+                                    isSelected:
+                                        _selectedSkills['Logo Design'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSkills['Logo Design'] =
+                                            !(_selectedSkills['Logo Design'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SkillContainer(
+                                    text: 'Game Design',
+                                    isSelected:
+                                        _selectedSkills['Game Design'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSkills['Game Design'] =
+                                            !(_selectedSkills['Game Design'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SkillContainer(
+                                    text: 'Industrial Design',
+                                    isSelected:
+                                        _selectedSkills['Industrial Design'] ??
+                                            false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSkills['Industrial Design'] =
+                                            !(_selectedSkills[
+                                                    'Industrial Design'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SkillContainer(
+                                    text: 'Creative Design',
+                                    isSelected:
+                                        _selectedSkills['Creative Design'] ??
+                                            false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSkills['Creative Design'] =
+                                            !(_selectedSkills[
+                                                    'Creative Design'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 10),
+
+                              // Development
+                              // Text(
+                              //   '2. Programming Language',
+                              //   style: TextStyle(
+                              //       fontSize: 12,
+                              //       fontWeight: FontWeight.bold,
+                              //       color: Colors.blue),
+                              // ),
+                              SizedBox(height: 10),
+                              Wrap(
+                                spacing: 14,
+                                runSpacing: 10,
+                                children: [
+                                  SkillContainer(
+                                    text: 'Java',
+                                    isSelected:
+                                        _selectedSkills['Java'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSkills['Java'] =
+                                            !(_selectedSkills['Java'] ?? false);
+                                      });
+                                    },
+                                  ),
+                                  SkillContainer(
+                                    text: 'Flutter',
+                                    isSelected:
+                                        _selectedSkills['Flutter'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSkills['Flutter'] =
+                                            !(_selectedSkills['Flutter'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SkillContainer(
+                                    text: 'Python',
+                                    isSelected:
+                                        _selectedSkills['Python'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSkills['Python'] =
+                                            !(_selectedSkills['Python'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SkillContainer(
+                                    text: 'Java Script',
+                                    isSelected:
+                                        _selectedSkills['Java Script'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSkills['Java Script'] =
+                                            !(_selectedSkills['Java Script'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SkillContainer(
+                                    text: 'PHP',
+                                    isSelected: _selectedSkills['PHP'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSkills['PHP'] =
+                                            !(_selectedSkills['PHP'] ?? false);
+                                      });
+                                    },
+                                  ),
+                                  SkillContainer(
+                                    text: 'Kotlin',
+                                    isSelected:
+                                        _selectedSkills['Kotlin'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSkills['Kotlin'] =
+                                            !(_selectedSkills['Kotlin'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SkillContainer(
+                                    text: 'Dart',
+                                    isSelected:
+                                        _selectedSkills['Dart'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSkills['Dart'] =
+                                            !(_selectedSkills['Dart'] ?? false);
+                                      });
+                                    },
+                                  ),
+                                  SkillContainer(
+                                    text: 'Golang',
+                                    isSelected:
+                                        _selectedSkills['Golang'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSkills['Golang'] =
+                                            !(_selectedSkills['Golang'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SkillContainer(
+                                    text: 'Swift',
+                                    isSelected:
+                                        _selectedSkills['Swift'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSkills['Swift'] =
+                                            !(_selectedSkills['Swift'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SkillContainer(
+                                    text: 'C++',
+                                    isSelected: _selectedSkills['C++'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSkills['C++'] =
+                                            !(_selectedSkills['C++'] ?? false);
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 10),
+
+                              // Machine Learning
+                              // Text(
+                              //   '3. Machine Learning',
+                              //   style: TextStyle(
+                              //       fontSize: 12,
+                              //       fontWeight: FontWeight.bold,
+                              //       color: Colors.blue),
+                              // ),
+                              SizedBox(height: 10),
+                              Wrap(
+                                spacing: 14,
+                                runSpacing: 10,
+                                children: [
+                                  SkillContainer(
+                                    text: 'Clasification',
+                                    isSelected:
+                                        _selectedSkills['Clasification'] ??
+                                            false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSkills['Clasification'] =
+                                            !(_selectedSkills[
+                                                    'Clasification'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SkillContainer(
+                                    text: 'Regression',
+                                    isSelected:
+                                        _selectedSkills['Regression'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSkills['Regression'] =
+                                            !(_selectedSkills['Regression'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SkillContainer(
+                                    text: 'Clustering',
+                                    isSelected:
+                                        _selectedSkills['Clustering'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSkills['Clustering'] =
+                                            !(_selectedSkills['Clustering'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SkillContainer(
+                                    text: 'Association',
+                                    isSelected:
+                                        _selectedSkills['Association'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSkills['Association'] =
+                                            !(_selectedSkills['Association'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SkillContainer(
+                                    text: 'Deep Learning',
+                                    isSelected:
+                                        _selectedSkills['Deep Learning'] ??
+                                            false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSkills['Deep Learning'] =
+                                            !(_selectedSkills[
+                                                    'Deep Learning'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SkillContainer(
+                                    text: 'jancok',
+                                    isSelected:
+                                        _selectedSkills['jancok'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSkills['jancok'] =
+                                            !(_selectedSkills['jancok'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SkillContainer(
+                                    text: 'Dart',
+                                    isSelected:
+                                        _selectedSkills['Dart'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSkills['Dart'] =
+                                            !(_selectedSkills['Dart'] ?? false);
+                                      });
+                                    },
+                                  ),
+                                  SkillContainer(
+                                    text: 'Golang',
+                                    isSelected:
+                                        _selectedSkills['Golang'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSkills['Golang'] =
+                                            !(_selectedSkills['Golang'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 10),
+
+                              // Security
+                              // Text(
+                              //   '4. Security',
+                              //   style: TextStyle(
+                              //       fontSize: 12,
+                              //       fontWeight: FontWeight.bold,
+                              //       color: Colors.blue),
+                              // ),
+                              SizedBox(height: 10),
+                              Wrap(
+                                spacing: 14,
+                                runSpacing: 10,
+                                children: [
+                                  SkillContainer(
+                                    text: 'Java',
+                                    isSelected:
+                                        _selectedSkills['Java'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSkills['Java'] =
+                                            !(_selectedSkills['Java'] ?? false);
+                                      });
+                                    },
+                                  ),
+                                  SkillContainer(
+                                    text: 'Flutter',
+                                    isSelected:
+                                        _selectedSkills['Flutter'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSkills['Flutter'] =
+                                            !(_selectedSkills['Flutter'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SkillContainer(
+                                    text: 'Python',
+                                    isSelected:
+                                        _selectedSkills['Python'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSkills['Python'] =
+                                            !(_selectedSkills['Python'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SkillContainer(
+                                    text: 'Java Script',
+                                    isSelected:
+                                        _selectedSkills['Java Script'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSkills['Java Script'] =
+                                            !(_selectedSkills['Java Script'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SkillContainer(
+                                    text: 'PHP',
+                                    isSelected: _selectedSkills['PHP'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSkills['PHP'] =
+                                            !(_selectedSkills['PHP'] ?? false);
+                                      });
+                                    },
+                                  ),
+                                  SkillContainer(
+                                    text: 'Kotlin',
+                                    isSelected:
+                                        _selectedSkills['Kotlin'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSkills['Kotlin'] =
+                                            !(_selectedSkills['Kotlin'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SkillContainer(
+                                    text: 'Dart',
+                                    isSelected:
+                                        _selectedSkills['Dart'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSkills['Dart'] =
+                                            !(_selectedSkills['Dart'] ?? false);
+                                      });
+                                    },
+                                  ),
+                                  SkillContainer(
+                                    text: 'Golang',
+                                    isSelected:
+                                        _selectedSkills['Golang'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSkills['Golang'] =
+                                            !(_selectedSkills['Golang'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
+
+                              SizedBox(height: 40),
+                              Text(
+                                '2. Software Skill',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.blue),
+                              ),
+                              SizedBox(height: 10),
+                              Wrap(
+                                spacing: 20,
+                                runSpacing: 10,
+                                children: [
+                                  SoftwareContainer(
+                                    assetPath: 'assets/logo/illustrator.png',
+                                    isSelected: _selectedSoftware[''] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSoftware[''] =
+                                            !(_selectedSoftware[''] ?? false);
+                                      });
+                                    },
+                                  ),
+                                  SoftwareContainer(
+                                    assetPath: 'assets/logo/photoshop.png',
+                                    isSelected:
+                                        _selectedSoftware['photoshop'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSoftware['photoshop'] =
+                                            !(_selectedSoftware['photoshop'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SoftwareContainer(
+                                    assetPath: 'assets/logo/coreldraw.png',
+                                    isSelected:
+                                        _selectedSoftware['coreldraw'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSoftware['coreldraw'] =
+                                            !(_selectedSoftware['coreldraw'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SoftwareContainer(
+                                    assetPath: 'assets/logo/sketch.png',
+                                    isSelected:
+                                        _selectedSoftware['sketch'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSoftware['sketch'] =
+                                            !(_selectedSoftware['sketch'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SoftwareContainer(
+                                    assetPath: 'assets/logo/adobeindesign.png',
+                                    isSelected:
+                                        _selectedSoftware['adobeindesign'] ??
+                                            false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSoftware['adobeindesign'] =
+                                            !(_selectedSoftware[
+                                                    'adobeindesign'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SoftwareContainer(
+                                    assetPath: 'assets/logo/gimp.png',
+                                    isSelected:
+                                        _selectedSoftware['gimp'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSoftware['gimp'] =
+                                            !(_selectedSoftware['gimp'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SoftwareContainer(
+                                    assetPath: 'assets/logo/figma.png',
+                                    isSelected:
+                                        _selectedSoftware['figma'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSoftware['figma'] =
+                                            !(_selectedSoftware['figma'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SoftwareContainer(
+                                    assetPath: 'assets/logo/affinity.png',
+                                    isSelected:
+                                        _selectedSoftware['affinity'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSoftware['affinity'] =
+                                            !(_selectedSoftware['affinity'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SoftwareContainer(
+                                    assetPath: 'assets/logo/sketchup.png',
+                                    isSelected:
+                                        _selectedSoftware['sketchup'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSoftware['sketchup'] =
+                                            !(_selectedSoftware['sketchup'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SoftwareContainer(
+                                    assetPath: 'assets/logo/autocad.png',
+                                    isSelected:
+                                        _selectedSoftware['autocad'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSoftware['autocad'] =
+                                            !(_selectedSoftware['autocad'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SoftwareContainer(
+                                    assetPath: 'assets/logo/inkscape.png',
+                                    isSelected:
+                                        _selectedSoftware['inkscape'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSoftware['inkscape'] =
+                                            !(_selectedSoftware['inkscape'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 10),
+
+                              // Development
+                              Text(
+                                '2. Vidio Editor',
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.blue),
+                              ),
+                              SizedBox(height: 10),
+                              Wrap(
+                                spacing: 20,
+                                runSpacing: 10,
+                                children: [
+                                  SoftwareContainer(
+                                    assetPath: 'assets/icons/icon.png',
+                                    isSelected:
+                                        _selectedSoftware['Java'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSoftware['Java'] =
+                                            !(_selectedSoftware['Java'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SoftwareContainer(
+                                    assetPath: 'assets/icons/icon.png',
+                                    isSelected:
+                                        _selectedSoftware['Flutter'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSoftware['Flutter'] =
+                                            !(_selectedSoftware['Flutter'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SoftwareContainer(
+                                    assetPath: 'assets/icons/icon.png',
+                                    isSelected:
+                                        _selectedSoftware['Python'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSoftware['Python'] =
+                                            !(_selectedSoftware['Python'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SoftwareContainer(
+                                    assetPath: 'assets/icons/icon.png',
+                                    isSelected:
+                                        _selectedSoftware['Java Script'] ??
+                                            false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSoftware['Java Script'] =
+                                            !(_selectedSoftware[
+                                                    'Java Script'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SoftwareContainer(
+                                    assetPath: 'assets/icons/icon.png',
+                                    isSelected:
+                                        _selectedSoftware['PHP'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSoftware['PHP'] =
+                                            !(_selectedSoftware['PHP'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SoftwareContainer(
+                                    assetPath: 'assets/icons/icon.png',
+                                    isSelected:
+                                        _selectedSoftware['Kotlin'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSoftware['Kotlin'] =
+                                            !(_selectedSoftware['Kotlin'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SoftwareContainer(
+                                    assetPath: 'assets/icons/icon.png',
+                                    isSelected:
+                                        _selectedSoftware['Dart'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSoftware['Dart'] =
+                                            !(_selectedSoftware['Dart'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SoftwareContainer(
+                                    assetPath: 'assets/icons/icon.png',
+                                    isSelected:
+                                        _selectedSoftware['Golang'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSoftware['Golang'] =
+                                            !(_selectedSoftware['Golang'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SoftwareContainer(
+                                    assetPath: 'assets/icons/icon.png',
+                                    isSelected:
+                                        _selectedSoftware['Swift'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSoftware['Swift'] =
+                                            !(_selectedSoftware['Swift'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SoftwareContainer(
+                                    assetPath: 'assets/icons/icon.png',
+                                    isSelected:
+                                        _selectedSoftware['C++'] ?? false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSoftware['C++'] =
+                                            !(_selectedSoftware['C++'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 10),
+
+                              // Machine Learning
+                              Text(
+                                '3. Machine Learning',
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.blue),
+                              ),
+                              SizedBox(height: 10),
+                              Wrap(
+                                spacing: 20,
+                                runSpacing: 10,
+                                children: [
+                                  SoftwareContainer(
+                                    assetPath: 'assets/icons/icon.png',
+                                    isSelected:
+                                        _selectedSoftware['Data Analysis'] ??
+                                            false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSoftware['Data Analysis'] =
+                                            !(_selectedSoftware[
+                                                    'Data Analysis'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SoftwareContainer(
+                                    assetPath: 'assets/icons/icon.png',
+                                    isSelected:
+                                        _selectedSoftware['Computer Vision'] ??
+                                            false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSoftware['Computer Vision'] =
+                                            !(_selectedSoftware[
+                                                    'Computer Vision'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SoftwareContainer(
+                                    assetPath: 'assets/icons/icon.png',
+                                    isSelected: _selectedSoftware[
+                                            'Natural Language Processing'] ??
+                                        false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSoftware[
+                                                'Natural Language Processing'] =
+                                            !(_selectedSoftware[
+                                                    'Natural Language Processing'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SoftwareContainer(
+                                    assetPath: 'assets/icons/icon.png',
+                                    isSelected:
+                                        _selectedSoftware['Deep Learning'] ??
+                                            false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSoftware['Deep Learning'] =
+                                            !(_selectedSoftware[
+                                                    'Deep Learning'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SoftwareContainer(
+                                    assetPath: 'assets/icons/icon.png',
+                                    isSelected:
+                                        _selectedSoftware['Neural Networks'] ??
+                                            false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSoftware['Neural Networks'] =
+                                            !(_selectedSoftware[
+                                                    'Neural Networks'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                  SoftwareContainer(
+                                    assetPath: 'assets/icons/icon.png',
+                                    isSelected: _selectedSoftware[
+                                            'Reinforcement Learning'] ??
+                                        false,
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSoftware[
+                                                'Reinforcement Learning'] =
+                                            !(_selectedSoftware[
+                                                    'Reinforcement Learning'] ??
+                                                false);
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      Container(
+                        height: 400,
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              for (int i = 0; i < hasilSearch.length; i++)
+                                Column(
+                                  children: [
+                                    Container(
+                                      width: 650,
+                                      height: 130,
+                                      padding: EdgeInsets.all(16.0),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius:
+                                            BorderRadius.circular(12.0),
+                                        border: Border.all(
+                                            color: Colors.blue, width: 1),
+                                      ),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  hasilSearch[i].nama!,
+                                                  style: TextStyle(
+                                                    color: Color(0xFF6372F5),
+                                                    fontSize: 16.0,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                SizedBox(height: 8.0),
+                                                Container(
+                                                  height: 50,
+                                                  child: SingleChildScrollView(
+                                                    child: Text(
+                                                      hasilSearch[i].deskripsi!,
+                                                      style: TextStyle(
+                                                        color: Colors.grey,
+                                                        fontSize: 12.0,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+
+                                          VerticalDivider(
+                                            color: Color(0xFF6372F5),
+                                            thickness: 4.0,
+                                          ),
+                                          SizedBox(
+                                              width:
+                                                  10.0), // Space to the right of the divider
+
+                                          Expanded(
+                                            child: Container(
+                                              height: 120,
+                                              child: SingleChildScrollView(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    RichText(
+                                                      text: TextSpan(
+                                                        children: [
+                                                          TextSpan(
+                                                            text:
+                                                                'Pemograman web & mobile: ',
+                                                            style: TextStyle(
+                                                              color: Color(
+                                                                  0xFF6372F5),
+                                                              fontSize: 12.0,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                          ),
+                                                          TextSpan(
+                                                            text: hasilSearch[i]
+                                                                .pemrogramanSkill,
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.grey,
+                                                              fontSize: 12.0,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    SizedBox(height: 4.0),
+                                                    RichText(
+                                                      text: TextSpan(
+                                                        children: [
+                                                          TextSpan(
+                                                            text:
+                                                                'Design Visual: ',
+                                                            style: TextStyle(
+                                                              color: Color(
+                                                                  0xFF6372F5),
+                                                              fontSize: 12.0,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                          ),
+                                                          TextSpan(
+                                                            text: hasilSearch[i]
+                                                                .designVisualSkill,
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.grey,
+                                                              fontSize: 12.0,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    SizedBox(height: 4.0),
+                                                    RichText(
+                                                      text: TextSpan(
+                                                        children: [
+                                                          TextSpan(
+                                                            text:
+                                                                'Keamanan Jaringan: ',
+                                                            style: TextStyle(
+                                                              color: Color(
+                                                                  0xFF6372F5),
+                                                              fontSize: 12.0,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                          ),
+                                                          TextSpan(
+                                                            text: hasilSearch[i]
+                                                                .keamananSkill,
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.grey,
+                                                              fontSize: 12.0,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    SizedBox(height: 4.0),
+                                                    RichText(
+                                                      text: TextSpan(
+                                                        children: [
+                                                          TextSpan(
+                                                            text:
+                                                                'Machine Learning: ',
+                                                            style: TextStyle(
+                                                              color: Color(
+                                                                  0xFF6372F5),
+                                                              fontSize: 12.0,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                          ),
+                                                          TextSpan(
+                                                            text: hasilSearch[i]
+                                                                .machineLearningSkill,
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.grey,
+                                                              fontSize: 12.0,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 15,
+                                    )
+                                  ],
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 100,
+                      ),
+                      footer(),
+                    ],
+                  ),
+                );
+              } else {
+                return CircularProgressIndicator();
+              }
+            }
+          }),
+    );
+  }
+}
+
+class SoftwareContainer extends StatelessWidget {
+  final String assetPath;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const SoftwareContainer({
+    required this.assetPath,
+    required this.isSelected,
+    required this.onTap,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.blue, width: 1),
+            ),
+            child: CircleAvatar(
+              radius: 25,
+              backgroundColor: isSelected ? Colors.blue : Colors.white,
+              child: Image.asset(
+                assetPath,
+                width: 25,
+                height: 25,
+                color: isSelected ? Colors.white : Colors.blue,
+              ),
+            ),
+          ),
+          // Remove the text under the icon
+          // Text(
+          //   skillName,
+          //   style: TextStyle(
+          //     fontSize: 12,
+          //     fontWeight: FontWeight.bold,
+          //   ),
+          // ),
+        ],
+      ),
+    );
+  }
+}
+
+class SkillContainer extends StatelessWidget {
+  final String text;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const SkillContainer({
+    required this.text,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 106, // Adjust the width as needed
+        height: 25,
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.blue : Colors.white,
+          border: Border.all(
+            color: Colors.blue,
+            width: 1,
+          ),
+        ),
+        alignment: Alignment.center, // Align text to the center
+        child: Text(
+          text,
+          style: TextStyle(
+            fontSize: 12,
+            color: isSelected ? Colors.white : Colors.blue,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
+}
