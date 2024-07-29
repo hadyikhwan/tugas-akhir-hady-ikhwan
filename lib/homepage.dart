@@ -168,65 +168,67 @@ class _MyHomePageState extends State<MyHomePage> {
     return hasil;
   }
 
-  List filterSkill() {
-    List hasil = [];
+  // List filterSkill() {
+  //   List hasil = [];
 
-    //data user
-    List programmingSementaraUser = [];
-    List machineLearningSementaraUser = [];
-    List securitySementaraUser = [];
-    List designVisualSementaraUser = [];
+  //   //data user
+  //   List programmingSementaraUser = [];
+  //   List machineLearningSementaraUser = [];
+  //   List securitySementaraUser = [];
+  //   List designVisualSementaraUser = [];
 
-    //perulangan untuk setiap user
-    for (int i = 0; i < seluruhDataPengguna.length; i++) {
-      designVisualSementaraUser =
-          pembacaSkillPemain(seluruhDataPengguna[i].designVisualSkill);
-      machineLearningSementaraUser =
-          pembacaSkillPemain(seluruhDataPengguna[i].machineLearningSkill);
-      securitySementaraUser =
-          pembacaSkillPemain(seluruhDataPengguna[i].keamananSkill);
-      programmingSementaraUser =
-          pembacaSkillPemain(seluruhDataPengguna[i].pemrogramanSkill);
+  //   print("total pengguna : " + seluruhDataPengguna.length.toString());
+  //   //perulangan untuk setiap user
+  //   for (int i = 0; i < seluruhDataPengguna.length; i++) {
+  //     designVisualSementaraUser =
+  //         pembacaSkillPemain(seluruhDataPengguna[i].designVisualSkill);
+  //     machineLearningSementaraUser =
+  //         pembacaSkillPemain(seluruhDataPengguna[i].machineLearningSkill);
+  //     securitySementaraUser =
+  //         pembacaSkillPemain(seluruhDataPengguna[i].keamananSkill);
+  //     programmingSementaraUser =
+  //         pembacaSkillPemain(seluruhDataPengguna[i].pemrogramanSkill);
 
-      //pengecekan di design visual
-      bool ketemu = false;
-      if (!ketemu) {
-        for (int j = 0; j < designVisualSementaraUser.length; i++) {
-          for (int k = 0; k < skillDesignVisual.length; k++) {
-            if (skillDesignVisual[k] == designVisualSementaraUser[j]) {
-              hasil.add(seluruhDataPengguna[i]);
-              ketemu = true;
-            }
-          }
-        }
-        for (int j = 0; j < machineLearningSementaraUser.length; i++) {
-          for (int k = 0; k < skillMachineLearning.length; k++) {
-            if (skillMachineLearning[k] == machineLearningSementaraUser[j]) {
-              hasil.add(seluruhDataPengguna[i]);
-              ketemu = true;
-            }
-          }
-        }
-        for (int j = 0; j < programmingSementaraUser.length; i++) {
-          for (int k = 0; k < skillProgrammingLanguage.length; k++) {
-            if (skillProgrammingLanguage[k] == programmingSementaraUser[j]) {
-              hasil.add(seluruhDataPengguna[i]);
-              ketemu = true;
-            }
-          }
-        }
-        for (int j = 0; j < securitySementaraUser.length; i++) {
-          for (int k = 0; k < skillSecurity.length; k++) {
-            if (skillSecurity[k] == securitySementaraUser[j]) {
-              hasil.add(seluruhDataPengguna[i]);
-              ketemu = true;
-            }
-          }
-        }
-      }
-    }
-    return hasil;
-  }
+  //     //pengecekan di design visual
+  //     bool ketemu = false;
+  //     if (!ketemu) {
+  //       for (int j = 0; j < designVisualSementaraUser.length; i++) {
+  //         for (int k = 0; k < skillDesignVisual.length; k++) {
+  //           if (skillDesignVisual[k] == designVisualSementaraUser[j]) {
+  //             hasil.add(seluruhDataPengguna[i]);
+  //             ketemu = true;
+  //           }
+  //         }
+  //       }
+  //       for (int j = 0; j < machineLearningSementaraUser.length; i++) {
+  //         for (int k = 0; k < skillMachineLearning.length; k++) {
+  //           if (skillMachineLearning[k] == machineLearningSementaraUser[j]) {
+  //             hasil.add(seluruhDataPengguna[i]);
+  //             ketemu = true;
+  //           }
+  //         }
+  //       }
+  //       for (int j = 0; j < programmingSementaraUser.length; i++) {
+  //         for (int k = 0; k < skillProgrammingLanguage.length; k++) {
+  //           if (skillProgrammingLanguage[k] == programmingSementaraUser[j]) {
+  //             hasil.add(seluruhDataPengguna[i]);
+  //             ketemu = true;
+  //           }
+  //         }
+  //       }
+  //       for (int j = 0; j < securitySementaraUser.length; i++) {
+  //         for (int k = 0; k < skillSecurity.length; k++) {
+  //           if (skillSecurity[k] == securitySementaraUser[j]) {
+  //             hasil.add(seluruhDataPengguna[i]);
+  //             ketemu = true;
+  //           }
+  //         }
+  //       }
+  //       print("tes");
+  //     }
+  //   }
+  //   return hasil;
+  // }
 
   clearData() {
     noPemrograman.clear();
@@ -729,7 +731,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               if (showFilter) {
                                 setState(() {
                                   print("filterSkill()");
-                                  print(filterSkill());
+                                  // print(filterSkill());
                                   showFilter = false;
                                 });
                               } else {
