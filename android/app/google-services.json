@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "696468649543",
+    "project_id": "uas-cadangan",
+    "storage_bucket": "uas-cadangan.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:696468649543:android:20cf9116d5db930ec16362",
+        "android_client_info": {
+          "package_name": "com.example.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCaCZZbIieRVI3UDKF3Qd-esseukK1jZX8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

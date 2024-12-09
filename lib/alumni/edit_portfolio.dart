@@ -1,51 +1,51 @@
 import 'package:flutter/material.dart';
-import 'package:skripsi/editS2.dart';
-import 'package:skripsi/editS1.dart';
-import 'package:skripsi/editS3.dart';
-import 'package:skripsi/editS4.dart';
-import 'package:skripsi/editS5.dart';
-import 'package:skripsi/editS6.dart';
-import 'package:skripsi/edits7.dart';
-import 'package:skripsi/footer.dart';
-import 'templateCV.dart';
-import 'package:skripsi/header.dart';
+import 'package:skripsi/alumni/header_alumni.dart';
+import 'editS1Alumni.dart';
+import 'editS2Alumni.dart';
+import 'editS3Alumni.dart';
+import 'editS4Alumni.dart';
+import 'editS5Alumni.dart';
+import 'editS6Alumni.dart';
+import 'editS7Alumni.dart';
+import 'package:skripsi/mahasiswa%20aktif/header.dart';
 import 'package:skripsi/footer.dart';
 
-class edit extends StatelessWidget {
-  const edit({super.key});
+class editalumni extends StatelessWidget {
+  const editalumni({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: editPage(),
+      body: EditPortfolio(),
     );
   }
 }
 
-class editPage extends StatefulWidget {
-  editPage({Key? key,}) : super(key: key);
-
+class EditPortfolio extends StatefulWidget {
+  EditPortfolio({
+    Key? key,
+  }) : super(key: key);
 
   @override
   _editPageState createState() => _editPageState();
 }
 
-class _editPageState extends State<editPage> {
+class _editPageState extends State<EditPortfolio> {
   int x = 1;
   List<Widget> halamanPilihan = [
-    EditS1(),
-    editS2(),
-    editS3(),
-    editS4(),
-    editS5(),
-    editS6(),
-    editS7(),
+    editS1Alumni(),
+    editS2Alumni(),
+    editS3Alumni(),
+    editS4Alumni(),
+    editS5Alumni(),
+    editS6Alumni(),
+    editS7Alumni(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 249, 249, 255),
-      appBar: header(),
+      appBar: HeaderAlumni(),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -362,7 +362,6 @@ class _editPageState extends State<editPage> {
                     width: 100,
                     color: Color.fromARGB(255, 249, 249, 255),
                     child: Row(
-                      
                       children: [
                         ElevatedButton(
                             onPressed: () {
@@ -374,7 +373,6 @@ class _editPageState extends State<editPage> {
                             child: Text("Back")),
                       ],
                     )),
-
                 Container(
                     width: 100,
                     color: Color.fromARGB(255, 249, 249, 255),
@@ -391,7 +389,6 @@ class _editPageState extends State<editPage> {
                             child: Text(x != 7 ? "Next" : "Finish")),
                       ],
                     )),
-                
               ],
             ),
             SizedBox(
@@ -399,7 +396,6 @@ class _editPageState extends State<editPage> {
             ),
             footer(),
           ],
-          
         ),
       ),
     );

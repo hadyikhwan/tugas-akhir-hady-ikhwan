@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:skripsi/editS2.dart';
+import 'package:skripsi/mahasiswa%20aktif/editS2.dart';
 import 'dart:html' as html;
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:skripsi/header.dart';
+import 'package:skripsi/mahasiswa%20aktif/header.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class achievementComponents {
@@ -38,9 +38,8 @@ String facebook = "";
 String github = "";
 String linkedin = "";
 String twiter = "";
-String email= "";
-String whatsapp= "";
-
+String email = "";
+String whatsapp = "";
 
 List<achievementComponents> achievementComponent = [];
 List<experienceComponents> experienceComponent = [];
@@ -71,6 +70,7 @@ setDataPathSoftwareDesignVisual() {
   pathImageSoftwareDesignVisual.add("assets/logo/coreldraw.png");
   pathImageSoftwareDesignVisual.add("assets/logo/sketch.png");
   pathImageSoftwareDesignVisual.add("assets/logo/adobeindesign.png");
+    pathImageSoftwareDesignVisual.add("assets/logo/gimp.png");
   pathImageSoftwareDesignVisual.add("assets/logo/figma.png");
   pathImageSoftwareDesignVisual.add("assets/logo/affinity.png");
   pathImageSoftwareDesignVisual.add("assets/logo/sketchup.png");
@@ -267,8 +267,6 @@ deleteData() {
 }
 
 getDataUser() async {
-  
-  
   deleteData();
 
   //software
@@ -277,7 +275,6 @@ getDataUser() async {
   setDataPathSoftwareProgramming();
   setDataPathSoftwareSecurity();
   setDataPathSoftwareVideoEditor();
-
 
   await FirebaseFirestore.instance
       .collection("User")
@@ -295,11 +292,6 @@ getDataUser() async {
       linkedin = value['linkLinkedin'];
       email = value['Email'];
       whatsapp = value['noHandphone'];
-
-
-
-
-
     },
   );
   //achievement
@@ -401,7 +393,10 @@ getDataUser() async {
         }
       });
     },
+    
   );
+
+
 
   //software
   await FirebaseFirestore.instance
@@ -443,6 +438,7 @@ getDataUser() async {
       });
     },
   );
+print(kodePilihanDesignVisual);
 
   //nilaiMK
   await FirebaseFirestore.instance
@@ -453,7 +449,6 @@ getDataUser() async {
       .then(
     (value) {
       value.docs.forEach((element) {
-        print("laskjdflasejflaskjdfe");
         switch (element.id) {
           case "semester1":
             nilaiSems1.add(int.parse(element['Matematika Dasar']));
@@ -698,6 +693,10 @@ class _portfolioPageState extends State<portfolioPage> {
     html.window.open(url, 'new tab');
   }
 
+  TextEditingController emailLama = new TextEditingController();
+  TextEditingController emailBaru = new TextEditingController();
+  TextEditingController password = new TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -748,7 +747,59 @@ class _portfolioPageState extends State<portfolioPage> {
                               Row(
                                 children: [
                                   ElevatedButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return SimpleDialog(
+                                              children: [
+                                                Column(
+                                                  children: [
+                                                    TextField(
+                                                      controller: emailLama,
+                                                      decoration:
+                                                          InputDecoration(
+                                                              hintText:
+                                                                  "email lama"),
+                                                    ),
+                                                    TextField(
+                                                      controller: emailBaru,
+                                                      decoration:
+                                                          InputDecoration(
+                                                              hintText:
+                                                                  "email baru"),
+                                                    ),
+                                                    TextField(
+                                                      controller: password,
+                                                      decoration:
+                                                          InputDecoration(
+                                                              hintText:
+                                                                  "password"),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 50,
+                                                    ),
+                                                    ElevatedButton(
+                                                        onPressed: () async {
+                                                            await FirebaseAuth
+                                                                .instance
+                                                                .currentUser!
+                                                                .verifyBeforeUpdateEmail(
+                                                                    emailBaru
+                                                                        .text);
+                                                            print("email : " + await FirebaseAuth.instance.currentUser!.email.toString());
+
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: Text(
+                                                            "update email"))
+                                                  ],
+                                                ),
+                                              ],
+                                            );
+                                          });
+                                    },
                                     child: Text('DISCOVER NOW'),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.blue,
@@ -780,7 +831,10 @@ class _portfolioPageState extends State<portfolioPage> {
                                                   children: [
                                                     CircleAvatar(
                                                       radius: 40,
-                                                      backgroundImage: NetworkImage(urlImage),),
+                                                      backgroundImage:
+                                                          NetworkImage(
+                                                              urlImage),
+                                                    ),
                                                     SizedBox(height: 10),
                                                     Text(
                                                       namaUser,
@@ -810,8 +864,8 @@ class _portfolioPageState extends State<portfolioPage> {
                                                     ),
                                                     SizedBox(height: 20),
                                                     GestureDetector(
-                                                      onTap: () => _onIconPressed(
-                                                          email),
+                                                      onTap: () =>
+                                                          _onIconPressed(email),
                                                       child: Container(
                                                         padding: EdgeInsets
                                                             .symmetric(
@@ -838,13 +892,14 @@ class _portfolioPageState extends State<portfolioPage> {
                                                           MainAxisAlignment
                                                               .spaceEvenly,
                                                       children: [
-                                                         IconButton(
+                                                        IconButton(
                                                           icon: FaIcon(
                                                               FontAwesomeIcons
                                                                   .whatsapp),
                                                           onPressed: () =>
                                                               _onIconPressed(
-                                                                  "https://wa.me/"+whatsapp),
+                                                                  "https://wa.me/" +
+                                                                      whatsapp),
                                                         ),
                                                         IconButton(
                                                           icon: FaIcon(
@@ -852,7 +907,8 @@ class _portfolioPageState extends State<portfolioPage> {
                                                                   .twitter),
                                                           onPressed: () =>
                                                               _onIconPressed(
-                                                                  "https://x.com/"+twiter),
+                                                                  "https://x.com/" +
+                                                                      twiter),
                                                         ),
                                                         IconButton(
                                                           icon: FaIcon(
@@ -860,7 +916,8 @@ class _portfolioPageState extends State<portfolioPage> {
                                                                   .squareInstagram),
                                                           onPressed: () =>
                                                               _onIconPressed(
-                                                                  "https://www.instagram.com/"+instagram),
+                                                                  "https://www.instagram.com/" +
+                                                                      instagram),
                                                         ),
                                                         IconButton(
                                                           icon: FaIcon(
@@ -868,7 +925,8 @@ class _portfolioPageState extends State<portfolioPage> {
                                                                   .facebook),
                                                           onPressed: () =>
                                                               _onIconPressed(
-                                                                  "https://www.facebook.com/"+facebook),
+                                                                  "https://www.facebook.com/" +
+                                                                      facebook),
                                                         ),
                                                         IconButton(
                                                           icon: FaIcon(
@@ -876,7 +934,8 @@ class _portfolioPageState extends State<portfolioPage> {
                                                                   .linkedin),
                                                           onPressed: () =>
                                                               _onIconPressed(
-                                                                  "https://id.linkedin.com/in/"+linkedin),
+                                                                  "https://id.linkedin.com/in/" +
+                                                                      linkedin),
                                                         ),
                                                         IconButton(
                                                           icon: FaIcon(
@@ -884,7 +943,8 @@ class _portfolioPageState extends State<portfolioPage> {
                                                                   .github),
                                                           onPressed: () =>
                                                               _onIconPressed(
-                                                                  "https://github.com/"+github),
+                                                                  "https://github.com/" +
+                                                                      github),
                                                         ),
                                                       ],
                                                     ),
@@ -1177,7 +1237,7 @@ class _portfolioPageState extends State<portfolioPage> {
                                                   ),
                                                   child: Center(
                                                     child: Text(
-                                                      skillDesignVisual[i],
+                                                      skillDesignVisual[j],
                                                       style: TextStyle(
                                                         fontSize: 16,
                                                         color: Colors.blue,
@@ -1276,7 +1336,7 @@ class _portfolioPageState extends State<portfolioPage> {
                                                   child: Center(
                                                     child: Text(
                                                       skillProgrammingLanguage[
-                                                          i],
+                                                          j],
                                                       style: TextStyle(
                                                         fontSize: 16,
                                                         color: Colors.blue,
@@ -1374,7 +1434,7 @@ class _portfolioPageState extends State<portfolioPage> {
                                                   ),
                                                   child: Center(
                                                     child: Text(
-                                                      skillMachineLearning[i],
+                                                      skillMachineLearning[j],
                                                       style: TextStyle(
                                                         fontSize: 16,
                                                         color: Colors.blue,
@@ -1468,7 +1528,7 @@ class _portfolioPageState extends State<portfolioPage> {
                                                   ),
                                                   child: Center(
                                                     child: Text(
-                                                      skillSecurity[i],
+                                                      skillSecurity[j],
                                                       style: TextStyle(
                                                         fontSize: 16,
                                                         color: Colors.blue,

@@ -41,46 +41,47 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDWb51ErgWywKoMZ5LjTzWx3-ckM5m_zz0',
-    appId: '1:538461756956:web:5970a0063822fac9c789d9',
-    messagingSenderId: '538461756956',
-    projectId: 'uas1-478e5',
-    authDomain: 'uas1-478e5.firebaseapp.com',
-    storageBucket: 'uas1-478e5.appspot.com',
+    apiKey: 'AIzaSyBEYBrGiX_j2cUdKZ7c39dy40RHoZgrC6U',
+    appId: '1:696468649543:web:69126e383971ef24c16362',
+    messagingSenderId: '696468649543',
+    projectId: 'uas-cadangan',
+    authDomain: 'uas-cadangan.firebaseapp.com',
+    storageBucket: 'uas-cadangan.appspot.com',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDybsnc6dkgCV_wpm0egub4Zcf9m--zkLc',
-    appId: '1:538461756956:android:9eea9d7685a3b12bc789d9',
-    messagingSenderId: '538461756956',
-    projectId: 'uas1-478e5',
-    storageBucket: 'uas1-478e5.appspot.com',
+    apiKey: 'AIzaSyCaCZZbIieRVI3UDKF3Qd-esseukK1jZX8',
+    appId: '1:696468649543:android:20cf9116d5db930ec16362',
+    messagingSenderId: '696468649543',
+    projectId: 'uas-cadangan',
+    storageBucket: 'uas-cadangan.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBtiryvZvOODH5biQETRVVsiDj9qFDDH8k',
-    appId: '1:538461756956:ios:6a4c95d9e0ae27a0c789d9',
-    messagingSenderId: '538461756956',
-    projectId: 'uas1-478e5',
-    storageBucket: 'uas1-478e5.appspot.com',
-    iosBundleId: 'com.example.flutterApplication1',
+    apiKey: 'AIzaSyDizg4tAoJbMuX6zs9dHZkjq_7inenUcFQ',
+    appId: '1:696468649543:ios:aeb5b292754bbd2ac16362',
+    messagingSenderId: '696468649543',
+    projectId: 'uas-cadangan',
+    storageBucket: 'uas-cadangan.appspot.com',
+    iosBundleId: 'com.example.skripsi',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyBtiryvZvOODH5biQETRVVsiDj9qFDDH8k',
-    appId: '1:538461756956:ios:6a4c95d9e0ae27a0c789d9',
-    messagingSenderId: '538461756956',
-    projectId: 'uas1-478e5',
-    storageBucket: 'uas1-478e5.appspot.com',
-    iosBundleId: 'com.example.flutterApplication1',
+    apiKey: 'AIzaSyDizg4tAoJbMuX6zs9dHZkjq_7inenUcFQ',
+    appId: '1:696468649543:ios:aeb5b292754bbd2ac16362',
+    messagingSenderId: '696468649543',
+    projectId: 'uas-cadangan',
+    storageBucket: 'uas-cadangan.appspot.com',
+    iosBundleId: 'com.example.skripsi',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyDWb51ErgWywKoMZ5LjTzWx3-ckM5m_zz0',
-    appId: '1:538461756956:web:936e14b4c7ac3a0ac789d9',
-    messagingSenderId: '538461756956',
-    projectId: 'uas1-478e5',
-    authDomain: 'uas1-478e5.firebaseapp.com',
-    storageBucket: 'uas1-478e5.appspot.com',
+    apiKey: 'AIzaSyBEYBrGiX_j2cUdKZ7c39dy40RHoZgrC6U',
+    appId: '1:696468649543:web:1adfbf9fede0795fc16362',
+    messagingSenderId: '696468649543',
+    projectId: 'uas-cadangan',
+    authDomain: 'uas-cadangan.firebaseapp.com',
+    storageBucket: 'uas-cadangan.appspot.com',
   );
+
 }

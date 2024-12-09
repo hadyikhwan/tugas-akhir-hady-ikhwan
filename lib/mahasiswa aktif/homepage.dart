@@ -2,8 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:printing/printing.dart';
-import 'package:skripsi/ecek_guest.dart';
-import 'package:skripsi/headerLog.dart';
 import 'package:skripsi/mahasiswa%20aktif/ecek.dart';
 import 'package:skripsi/admin/ecek_admin.dart';
 import 'package:skripsi/mahasiswa%20aktif/editS2.dart';
@@ -17,8 +15,8 @@ import 'package:skripsi/admin/header_Admin.dart';
 import 'package:skripsi/mahasiswa%20aktif/header.dart';
 import 'package:skripsi/footer.dart';
 
-class Landingpage extends StatelessWidget {
-  const Landingpage({super.key});
+class Homepage_mahasiswa extends StatelessWidget {
+  const Homepage_mahasiswa({super.key});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -677,7 +675,7 @@ class _MyHomePageState extends State<MyHomePage> {
     TextEditingController editJumlahMahasiswa = new TextEditingController();
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 249, 249, 255),
-      appBar: headerlog(),
+      appBar: header  (),
       body: FutureBuilder(
           future: isFirst ? getNothing() : getData(),
           builder: (context, snapshot) {
@@ -2158,7 +2156,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) => EcekGuest(
+                                            builder: (context) => MyAppadmin(
                                                 id: hasilSearch[i].id!),
                                           ));
                                     },

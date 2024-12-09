@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:skripsi/footer.dart';
-import 'package:skripsi/homepage.dart';
+import 'package:skripsi/mahasiswa%20aktif/homepage.dart';
 
 class footer extends StatelessWidget {
   const footer({Key? key}) : super(key: key);

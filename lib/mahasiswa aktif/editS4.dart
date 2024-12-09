@@ -154,7 +154,7 @@ class _FormPageState extends State<FormPage> {
                             child: Column(
                               children: [
                                 _skillControllers.length == 0
-                                    ? Text("Add Skill dulu asw")
+                                    ? Text("Add Skill dulu")
                                     : Visibility(
                                         visible: false, child: Text("")),
                                 for (int i = 0;

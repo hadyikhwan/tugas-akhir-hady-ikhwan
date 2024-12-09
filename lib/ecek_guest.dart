@@ -1,12 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:skripsi/editS2.dart';
+import 'package:skripsi/admin/header_Admin.dart';
+import 'package:skripsi/headerLog.dart';
+import 'package:skripsi/mahasiswa%20aktif/editS2.dart';
 import 'dart:html' as html;
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:skripsi/header.dart';
+import 'package:skripsi/mahasiswa%20aktif/header.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class achievementComponents {
@@ -70,6 +72,7 @@ setDataPathSoftwareDesignVisual() {
   pathImageSoftwareDesignVisual.add("assets/logo/coreldraw.png");
   pathImageSoftwareDesignVisual.add("assets/logo/sketch.png");
   pathImageSoftwareDesignVisual.add("assets/logo/adobeindesign.png");
+  pathImageSoftwareDesignVisual.add("assets/logo/gimp.png");
   pathImageSoftwareDesignVisual.add("assets/logo/figma.png");
   pathImageSoftwareDesignVisual.add("assets/logo/affinity.png");
   pathImageSoftwareDesignVisual.add("assets/logo/sketchup.png");
@@ -401,9 +404,9 @@ void convertingSkillProgrammingLanguage(List<int> x) {
   }
 }
 
-class MyAppadmin extends StatelessWidget {
+class EcekGuest extends StatelessWidget {
   final String id;
-  const MyAppadmin({super.key, required this.id});
+  const EcekGuest({super.key, required this.id});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -726,7 +729,7 @@ class _portfolioPageState extends State<portfolioPage> {
 
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 249, 249, 255),
-      appBar: header(),
+      appBar: headerlog(),
       body: FutureBuilder(
           future: getDataUser(),
           builder: (context, snapshot) {
@@ -1210,7 +1213,7 @@ class _portfolioPageState extends State<portfolioPage> {
                                                   ),
                                                   child: Center(
                                                     child: Text(
-                                                      skillDesignVisual[i],
+                                                      skillDesignVisual[j],
                                                       style: TextStyle(
                                                         fontSize: 16,
                                                         color: Colors.blue,
@@ -1309,7 +1312,7 @@ class _portfolioPageState extends State<portfolioPage> {
                                                   child: Center(
                                                     child: Text(
                                                       skillProgrammingLanguage[
-                                                          i],
+                                                          j],
                                                       style: TextStyle(
                                                         fontSize: 16,
                                                         color: Colors.blue,
@@ -1407,7 +1410,7 @@ class _portfolioPageState extends State<portfolioPage> {
                                                   ),
                                                   child: Center(
                                                     child: Text(
-                                                      skillMachineLearning[i],
+                                                      skillMachineLearning[j],
                                                       style: TextStyle(
                                                         fontSize: 16,
                                                         color: Colors.blue,
@@ -1501,7 +1504,7 @@ class _portfolioPageState extends State<portfolioPage> {
                                                   ),
                                                   child: Center(
                                                     child: Text(
-                                                      skillSecurity[i],
+                                                      skillSecurity[j],
                                                       style: TextStyle(
                                                         fontSize: 16,
                                                         color: Colors.blue,

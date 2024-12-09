@@ -1,20 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:skripsi/ecek.dart';
-import 'package:skripsi/editS2.dart';
-import 'package:skripsi/editS1.dart';
-import 'package:skripsi/editS3.dart';
-import 'package:skripsi/editS4.dart';
-import 'package:skripsi/editS5.dart';
-import 'package:skripsi/editS6.dart';
+import 'package:printing/printing.dart';
+import 'package:skripsi/alumni/header_alumni.dart';
+import 'package:skripsi/mahasiswa%20aktif/ecek.dart';
+import 'package:skripsi/admin/ecek_admin.dart';
+import 'package:skripsi/mahasiswa%20aktif/editS2.dart';
+import 'package:skripsi/mahasiswa%20aktif/editS1.dart';
+import 'package:skripsi/mahasiswa%20aktif/editS3.dart';
+import 'package:skripsi/mahasiswa%20aktif/editS4.dart';
+import 'package:skripsi/mahasiswa%20aktif/editS5.dart';
+import 'package:skripsi/mahasiswa%20aktif/editS6.dart';
 import 'package:skripsi/firestore%20service/DatabaseService.dart';
-import 'templateCV.dart';
-import 'package:skripsi/header.dart';
+import 'package:skripsi/admin/header_Admin.dart';
+import 'package:skripsi/mahasiswa%20aktif/header.dart';
 import 'package:skripsi/footer.dart';
 
-class homepage extends StatelessWidget {
-  const homepage({super.key});
+class HomepageAlumni extends StatelessWidget {
+  const HomepageAlumni({super.key});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -163,72 +166,97 @@ class _MyHomePageState extends State<MyHomePage> {
           }
         }
       }
+      hasil.add(kata);
     }
 
     return hasil;
   }
 
-  // List filterSkill() {
-  //   List hasil = [];
+  List<dataUser> hasilFilter = [];
+  filterSkill() {
+    hasilFilter.clear();
 
-  //   //data user
-  //   List programmingSementaraUser = [];
-  //   List machineLearningSementaraUser = [];
-  //   List securitySementaraUser = [];
-  //   List designVisualSementaraUser = [];
+    //data skill user
+    List programmingSementaraUser = [];
+    List machineLearningSementaraUser = [];
+    List securitySementaraUser = [];
+    List designVisualSementaraUser = [];
+    convertingSkillDesignVisual(skill_DesignVisual);
+    convertingSkillMachineLearning(skill_MachineLearning);
+    convertingSkillProgrammingLanguage(skill_ProgrammingLanguage);
+    convertingSkillSecurity(skill_Security);
 
-  //   print("total pengguna : " + seluruhDataPengguna.length.toString());
-  //   //perulangan untuk setiap user
-  //   for (int i = 0; i < seluruhDataPengguna.length; i++) {
-  //     designVisualSementaraUser =
-  //         pembacaSkillPemain(seluruhDataPengguna[i].designVisualSkill);
-  //     machineLearningSementaraUser =
-  //         pembacaSkillPemain(seluruhDataPengguna[i].machineLearningSkill);
-  //     securitySementaraUser =
-  //         pembacaSkillPemain(seluruhDataPengguna[i].keamananSkill);
-  //     programmingSementaraUser =
-  //         pembacaSkillPemain(seluruhDataPengguna[i].pemrogramanSkill);
+    //data software user
+    List programmingSoftwareSementaraUser = [];
+    List machineLearningSoftwareSementaraUser = [];
+    List securitySoftwareSementaraUser = [];
+    List designVisualSoftwareSementaraUser = [];
+    List videoEditorSoftwareSementaraUser = [];
 
-  //     //pengecekan di design visual
-  //     bool ketemu = false;
-  //     if (!ketemu) {
-  //       for (int j = 0; j < designVisualSementaraUser.length; i++) {
-  //         for (int k = 0; k < skillDesignVisual.length; k++) {
-  //           if (skillDesignVisual[k] == designVisualSementaraUser[j]) {
-  //             hasil.add(seluruhDataPengguna[i]);
-  //             ketemu = true;
-  //           }
-  //         }
-  //       }
-  //       for (int j = 0; j < machineLearningSementaraUser.length; i++) {
-  //         for (int k = 0; k < skillMachineLearning.length; k++) {
-  //           if (skillMachineLearning[k] == machineLearningSementaraUser[j]) {
-  //             hasil.add(seluruhDataPengguna[i]);
-  //             ketemu = true;
-  //           }
-  //         }
-  //       }
-  //       for (int j = 0; j < programmingSementaraUser.length; i++) {
-  //         for (int k = 0; k < skillProgrammingLanguage.length; k++) {
-  //           if (skillProgrammingLanguage[k] == programmingSementaraUser[j]) {
-  //             hasil.add(seluruhDataPengguna[i]);
-  //             ketemu = true;
-  //           }
-  //         }
-  //       }
-  //       for (int j = 0; j < securitySementaraUser.length; i++) {
-  //         for (int k = 0; k < skillSecurity.length; k++) {
-  //           if (skillSecurity[k] == securitySementaraUser[j]) {
-  //             hasil.add(seluruhDataPengguna[i]);
-  //             ketemu = true;
-  //           }
-  //         }
-  //       }
-  //       print("tes");
-  //     }
-  //   }
-  //   return hasil;
-  // }
+    //perulangan untuk setiap user
+    for (int i = 0; i < seluruhDataPengguna.length; i++) {
+      designVisualSementaraUser =
+          pembacaSkillPemain(seluruhDataPengguna[i].designVisualSkill);
+      machineLearningSementaraUser =
+          pembacaSkillPemain(seluruhDataPengguna[i].machineLearningSkill);
+      securitySementaraUser =
+          pembacaSkillPemain(seluruhDataPengguna[i].keamananSkill);
+      programmingSementaraUser =
+          pembacaSkillPemain(seluruhDataPengguna[i].pemrogramanSkill);
+
+      //pengecekan di design visual
+      bool ketemu = false;
+      List<int> patokan = [];
+      if (!ketemu) {
+        for (int j = 0; j < designVisualSementaraUser.length; j++) {
+          for (int k = 0; k < skillDesignVisual.length; k++) {
+            if (skillDesignVisual[k] == designVisualSementaraUser[j]) {
+              patokan.add(0);
+              ketemu = true;
+              break;
+            }
+          }
+        }
+        for (int j = 0; j < machineLearningSementaraUser.length; j++) {
+          for (int k = 0; k < skillMachineLearning.length; k++) {
+            if (skillMachineLearning[k] == machineLearningSementaraUser[j]) {
+              patokan.add(0);
+              ketemu = true;
+              break;
+            }
+          }
+        }
+        for (int j = 0; j < programmingSementaraUser.length; j++) {
+          for (int k = 0; k < skillProgrammingLanguage.length; k++) {
+            if (skillProgrammingLanguage[k] == programmingSementaraUser[j]) {
+              patokan.add(0);
+              ketemu = true;
+              break;
+            }
+          }
+        }
+        for (int j = 0; j < securitySementaraUser.length; j++) {
+          for (int k = 0; k < skillSecurity.length; k++) {
+            if (skillSecurity[k] == securitySementaraUser[j]) {
+              patokan.add(0);
+              ketemu = true;
+              break;
+            }
+          }
+        }
+
+        //proses pemasukan data
+        if (patokan.length ==
+            skillSecurity.length +
+                skillDesignVisual.length +
+                skillMachineLearning.length +
+                skillProgrammingLanguage.length) {
+          hasilFilter.add(seluruhDataPengguna[i]);
+        }
+      }
+      ketemu = false;
+    }
+  }
 
   clearData() {
     noPemrograman.clear();
@@ -448,9 +476,41 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  //ADMIN
+  int totalUser = 0;
+  int totalMahasiswaAktif = 0;
+
+  setDataAdmin() async {
+    // await Databaseservice(userID: "")
+    //     .setDatabaseAdmin();
+
+    await Databaseservice(userID: "qK9Ni5kE45dMnbCGRW2gPtIky4w2")
+        .hitungTotalUser();
+    await Databaseservice(userID: "qK9Ni5kE45dMnbCGRW2gPtIky4w2")
+        .hitungTotalAlumni();
+    await Databaseservice(userID: "qK9Ni5kE45dMnbCGRW2gPtIky4w2")
+        .hitungTotalPertanyaan();
+    await Databaseservice(userID: "qK9Ni5kE45dMnbCGRW2gPtIky4w2")
+        .hitungTotalEvent();
+
+    totalUser = await Databaseservice(userID: "qK9Ni5kE45dMnbCGRW2gPtIky4w2")
+        .GetTotalUser();
+    totalMahasiswaAktif =
+        await Databaseservice(userID: "qK9Ni5kE45dMnbCGRW2gPtIky4w2")
+            .GetTotalMahasiswa();
+
+    setState(() {});
+  }
+
+  updateTotalMahasiwa(int inputanData) async {
+    await Databaseservice(userID: "qK9Ni5kE45dMnbCGRW2gPtIky4w2")
+        .updateTotalMahasiswa(inputanData);
+  }
+
   bool isFirst = false;
   getNothing() {}
   getData() async {
+    seluruhDataPengguna.clear();
     await FirebaseFirestore.instance.collection("User").get().then(
       (value) {
         value.docs.forEach(
@@ -468,6 +528,8 @@ class _MyHomePageState extends State<MyHomePage> {
         );
       },
     );
+    print(seluruhDataPengguna.length);
+    await setDataAdmin();
     await addDataSkill();
 
     for (int i = 0; i < seluruhDataPengguna.length - 1; i++) {
@@ -487,8 +549,9 @@ class _MyHomePageState extends State<MyHomePage> {
         i++) {
       hasilSearch.add(seluruhDataPengguna[i]);
     }
-
-    isFirst = true;
+    setState(() {
+      isFirst = true;
+    });
   }
 
   int x = 1;
@@ -573,12 +636,52 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    List<DashboardItem> items = [
+      DashboardItem(
+        berbutton: true,
+        icon: Icon(
+          Icons.edit,
+          color: const Color.fromARGB(255, 255, 147, 139),
+        ),
+        imagePath: 'assets/student active.png',
+        title: 'Active Students',
+        count: totalMahasiswaAktif.toString(),
+        color: const Color.fromARGB(255, 249, 229, 234),
+      ),
+      DashboardItem(
+        berbutton: false,
+        icon: null,
+        imagePath: 'assets/STUDent.png',
+        title: 'Total User',
+        count: totalUser.toString(),
+        color: const Color.fromARGB(255, 237, 223, 247),
+      ),
+      DashboardItem(
+        berbutton: false,
+        icon: null,
+        imagePath: 'assets/software.png',
+        title: 'Software Skill',
+        count: '25',
+        color: const Color.fromARGB(255, 251, 237, 217),
+      ),
+      DashboardItem(
+        berbutton: false,
+        icon: null,
+        imagePath: 'assets/softskil.png',
+        title: 'Softskill',
+        count: '32',
+        color: Color.fromARGB(255, 223, 237, 247),
+      ),
+    ];
+    TextEditingController editJumlahMahasiswa = new TextEditingController();
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 249, 249, 255),
-      appBar: header(),
+      appBar: HeaderAlumni(),
       body: FutureBuilder(
           future: isFirst ? getNothing() : getData(),
           builder: (context, snapshot) {
+            print(isFirst);
+
             if (isFirst) {
               return SingleChildScrollView(
                 child: Column(
@@ -668,8 +771,170 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ),
                     SizedBox(
-                      height: 100,
+                      height: 50,
                     ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(
+                        items.length,
+                        (index) => Padding(
+                          padding: const EdgeInsets.all(30.0),
+                          child: Expanded(
+                            child: Container(
+                              height: 200,
+                              width: 180,
+                              decoration: BoxDecoration(
+                                color: items[index].color,
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 2,
+                                    blurRadius: 5,
+                                    offset: Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: Stack(
+                                children: [
+                                  Align(
+                                    alignment: Alignment.topRight,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(5.0),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          if (items[index].berbutton) {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return SimpleDialog(
+                                                  children: [
+                                                    Padding(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 25.0,
+                                                          vertical: 5),
+                                                      child: Container(
+                                                        child: Column(
+                                                          children: [
+                                                            Text(
+                                                                "Ganti Jumlah Mahasiswa Aktif Saat Ini"),
+                                                            SizedBox(
+                                                              height: 25,
+                                                            ),
+                                                            TextField(
+                                                              controller:
+                                                                  editJumlahMahasiswa,
+                                                              keyboardType:
+                                                                  TextInputType
+                                                                      .number,
+                                                              decoration:
+                                                                  InputDecoration(
+                                                                hintText:
+                                                                    "Masukkan Jumlah Mahasiswa",
+                                                              ),
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
+                                                            ),
+                                                            SizedBox(
+                                                              height: 25,
+                                                            ),
+                                                            GestureDetector(
+                                                              onTap: () async {
+                                                                await updateTotalMahasiwa(
+                                                                    int.parse(
+                                                                        editJumlahMahasiswa
+                                                                            .text));
+                                                                totalMahasiswaAktif =
+                                                                    int.parse(
+                                                                        editJumlahMahasiswa
+                                                                            .text);
+                                                                setState(() {});
+
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                              child: Container(
+                                                                width: 100,
+                                                                height: 35,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              10),
+                                                                  color: Colors
+                                                                      .green,
+                                                                ),
+                                                                child: Center(
+                                                                    child: Text(
+                                                                  "Ubah",
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500),
+                                                                )),
+                                                              ),
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    )
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          }
+                                        },
+                                        child: Container(
+                                          width: 25,
+                                          height: 25,
+                                          child: items[index].icon,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Image.asset(
+                                          items[index].imagePath,
+                                          width: 60,
+                                          height: 60,
+                                        ),
+                                        SizedBox(height: 10),
+                                        Text(
+                                          items[index].title,
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        SizedBox(height: 8),
+                                        Text(
+                                          items[index].count,
+                                          style: TextStyle(
+                                            fontSize: 26,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 100),
                     Container(
                       margin: EdgeInsets.symmetric(vertical: 20.0),
                       padding: EdgeInsets.symmetric(horizontal: 20.0),
@@ -692,9 +957,10 @@ class _MyHomePageState extends State<MyHomePage> {
                           ElevatedButton(
                             onPressed: () {
                               setState(() {
-                                showFilter =
-                                    !showFilter; // Toggle visibilitas filter
+                                showFilter = !showFilter;
+
                                 resetSelectedFilter();
+                                // Toggle visibilitas filter
                               });
                             },
                             child: Text(
@@ -712,59 +978,31 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                           SizedBox(width: 20.0),
                           Expanded(
-                            child: !showFilter
-                                ? TextField(
-                                    decoration: InputDecoration(
-                                      hintText: 'Search...',
-                                      border: InputBorder.none,
-                                    ),
-                                    onChanged: (value) {
-                                      namaYangDiSearch = value;
-                                    },
-                                  )
-                                : Container(
-                                    color: Colors.white,
-                                  ),
+                            child: TextField(
+                              decoration: InputDecoration(
+                                hintText: 'Search...',
+                                border: InputBorder.none,
+                              ),
+                              onChanged: (value) {
+                                namaYangDiSearch = value;
+                                print("data yang tersimpan : " +
+                                    namaYangDiSearch);
+                              },
+                            ),
                           ),
                           GestureDetector(
                             onTap: () {
-                              if (showFilter) {
-                                setState(() {
-                                  print("filterSkill()");
-                                  // print(filterSkill());
-                                  showFilter = false;
-                                });
-                              } else {
-                                setState(() {
-                                  searchNamaUser();
-                                });
-                              }
                               setState(() {
-                                convertingSkillProgrammingLanguage(
-                                    skill_ProgrammingLanguage);
-                                convertingSkillMachineLearning(
-                                    skill_MachineLearning);
-                                convertingSkillDesignVisual(skill_DesignVisual);
-                                convertingSkillSecurity(skill_Security);
-                                // print(skillDesignVisual);
-                                // print(skillMachineLearning);
-                                // print(skillProgrammingLanguage);
-                                // print(skillSecurity);
                                 for (int i = 0;
                                     i < seluruhDataPengguna.length;
                                     i++) {
-                                  print(pembacaSkillPemain(
-                                      seluruhDataPengguna[i]
-                                          .designVisualSkill));
-                                  print(pembacaSkillPemain(
-                                      seluruhDataPengguna[i]
-                                          .machineLearningSkill));
-                                  print(pembacaSkillPemain(
-                                      seluruhDataPengguna[i].pemrogramanSkill));
-                                  print(pembacaSkillPemain(
-                                      seluruhDataPengguna[i].keamananSkill));
-                                  print("object");
+                                  print("nama pengguna no " +
+                                      i.toString() +
+                                      " " +
+                                      seluruhDataPengguna[i].nama.toString());
                                 }
+                                searchNamaUser();
+                                showFilter = false;
                                 resetSelectedFilter();
                               });
                             },
@@ -1914,175 +2152,194 @@ class _MyHomePageState extends State<MyHomePage> {
                             for (int i = 0; i < hasilSearch.length; i++)
                               Column(
                                 children: [
-                                  Container(
-                                    width: 650,
-                                    height: 130,
-                                    padding: EdgeInsets.all(16.0),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(12.0),
-                                      border: Border.all(
-                                          color: Colors.blue, width: 1),
-                                    ),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                hasilSearch[i].nama!,
-                                                style: TextStyle(
-                                                  color: Color(0xFF6372F5),
-                                                  fontSize: 16.0,
-                                                  fontWeight: FontWeight.bold,
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => MyAppadmin(
+                                                id: hasilSearch[i].id!),
+                                          ));
+                                    },
+                                    child: Container(
+                                      width: 650,
+                                      height: 130,
+                                      padding: EdgeInsets.all(16.0),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius:
+                                            BorderRadius.circular(12.0),
+                                        border: Border.all(
+                                            color: Colors.blue, width: 1),
+                                      ),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  hasilSearch[i].nama!,
+                                                  style: TextStyle(
+                                                    color: Color(0xFF6372F5),
+                                                    fontSize: 16.0,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
                                                 ),
-                                              ),
-                                              SizedBox(height: 8.0),
-                                              Container(
-                                                height: 50,
-                                                child: SingleChildScrollView(
-                                                  child: Text(
-                                                    hasilSearch[i].deskripsi!,
-                                                    style: TextStyle(
-                                                      color: Colors.grey,
-                                                      fontSize: 12.0,
+                                                SizedBox(height: 8.0),
+                                                Container(
+                                                  height: 50,
+                                                  child: SingleChildScrollView(
+                                                    child: Text(
+                                                      hasilSearch[i].deskripsi!,
+                                                      style: TextStyle(
+                                                        color: Colors.grey,
+                                                        fontSize: 12.0,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
-                                              ),
-                                            ],
+                                              ],
+                                            ),
                                           ),
-                                        ),
 
-                                        VerticalDivider(
-                                          color: Color(0xFF6372F5),
-                                          thickness: 4.0,
-                                        ),
-                                        SizedBox(
-                                            width:
-                                                10.0), // Space to the right of the divider
+                                          VerticalDivider(
+                                            color: Color(0xFF6372F5),
+                                            thickness: 4.0,
+                                          ),
+                                          SizedBox(
+                                              width:
+                                                  10.0), // Space to the right of the divider
 
-                                        Expanded(
-                                          child: Container(
-                                            height: 120,
-                                            child: SingleChildScrollView(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  RichText(
-                                                    text: TextSpan(
-                                                      children: [
-                                                        TextSpan(
-                                                          text:
-                                                              'Pemograman web & mobile: ',
-                                                          style: TextStyle(
-                                                            color: Color(
-                                                                0xFF6372F5),
-                                                            fontSize: 12.0,
-                                                            fontWeight:
-                                                                FontWeight.bold,
+                                          Expanded(
+                                            child: Container(
+                                              height: 120,
+                                              child: SingleChildScrollView(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    RichText(
+                                                      text: TextSpan(
+                                                        children: [
+                                                          TextSpan(
+                                                            text:
+                                                                'Pemograman web & mobile: ',
+                                                            style: TextStyle(
+                                                              color: Color(
+                                                                  0xFF6372F5),
+                                                              fontSize: 12.0,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
                                                           ),
-                                                        ),
-                                                        TextSpan(
-                                                          text: hasilSearch[i]
-                                                              .pemrogramanSkill,
-                                                          style: TextStyle(
-                                                            color: Colors.grey,
-                                                            fontSize: 12.0,
+                                                          TextSpan(
+                                                            text: hasilSearch[i]
+                                                                .pemrogramanSkill,
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.grey,
+                                                              fontSize: 12.0,
+                                                            ),
                                                           ),
-                                                        ),
-                                                      ],
+                                                        ],
+                                                      ),
                                                     ),
-                                                  ),
-                                                  SizedBox(height: 4.0),
-                                                  RichText(
-                                                    text: TextSpan(
-                                                      children: [
-                                                        TextSpan(
-                                                          text:
-                                                              'Design Visual: ',
-                                                          style: TextStyle(
-                                                            color: Color(
-                                                                0xFF6372F5),
-                                                            fontSize: 12.0,
-                                                            fontWeight:
-                                                                FontWeight.bold,
+                                                    SizedBox(height: 4.0),
+                                                    RichText(
+                                                      text: TextSpan(
+                                                        children: [
+                                                          TextSpan(
+                                                            text:
+                                                                'Design Visual: ',
+                                                            style: TextStyle(
+                                                              color: Color(
+                                                                  0xFF6372F5),
+                                                              fontSize: 12.0,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
                                                           ),
-                                                        ),
-                                                        TextSpan(
-                                                          text: hasilSearch[i]
-                                                              .designVisualSkill,
-                                                          style: TextStyle(
-                                                            color: Colors.grey,
-                                                            fontSize: 12.0,
+                                                          TextSpan(
+                                                            text: hasilSearch[i]
+                                                                .designVisualSkill,
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.grey,
+                                                              fontSize: 12.0,
+                                                            ),
                                                           ),
-                                                        ),
-                                                      ],
+                                                        ],
+                                                      ),
                                                     ),
-                                                  ),
-                                                  SizedBox(height: 4.0),
-                                                  RichText(
-                                                    text: TextSpan(
-                                                      children: [
-                                                        TextSpan(
-                                                          text:
-                                                              'Keamanan Jaringan: ',
-                                                          style: TextStyle(
-                                                            color: Color(
-                                                                0xFF6372F5),
-                                                            fontSize: 12.0,
-                                                            fontWeight:
-                                                                FontWeight.bold,
+                                                    SizedBox(height: 4.0),
+                                                    RichText(
+                                                      text: TextSpan(
+                                                        children: [
+                                                          TextSpan(
+                                                            text:
+                                                                'Keamanan Jaringan: ',
+                                                            style: TextStyle(
+                                                              color: Color(
+                                                                  0xFF6372F5),
+                                                              fontSize: 12.0,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
                                                           ),
-                                                        ),
-                                                        TextSpan(
-                                                          text: hasilSearch[i]
-                                                              .keamananSkill,
-                                                          style: TextStyle(
-                                                            color: Colors.grey,
-                                                            fontSize: 12.0,
+                                                          TextSpan(
+                                                            text: hasilSearch[i]
+                                                                .keamananSkill,
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.grey,
+                                                              fontSize: 12.0,
+                                                            ),
                                                           ),
-                                                        ),
-                                                      ],
+                                                        ],
+                                                      ),
                                                     ),
-                                                  ),
-                                                  SizedBox(height: 4.0),
-                                                  RichText(
-                                                    text: TextSpan(
-                                                      children: [
-                                                        TextSpan(
-                                                          text:
-                                                              'Machine Learning: ',
-                                                          style: TextStyle(
-                                                            color: Color(
-                                                                0xFF6372F5),
-                                                            fontSize: 12.0,
-                                                            fontWeight:
-                                                                FontWeight.bold,
+                                                    SizedBox(height: 4.0),
+                                                    RichText(
+                                                      text: TextSpan(
+                                                        children: [
+                                                          TextSpan(
+                                                            text:
+                                                                'Machine Learning: ',
+                                                            style: TextStyle(
+                                                              color: Color(
+                                                                  0xFF6372F5),
+                                                              fontSize: 12.0,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
                                                           ),
-                                                        ),
-                                                        TextSpan(
-                                                          text: hasilSearch[i]
-                                                              .machineLearningSkill,
-                                                          style: TextStyle(
-                                                            color: Colors.grey,
-                                                            fontSize: 12.0,
+                                                          TextSpan(
+                                                            text: hasilSearch[i]
+                                                                .machineLearningSkill,
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.grey,
+                                                              fontSize: 12.0,
+                                                            ),
                                                           ),
-                                                        ),
-                                                      ],
+                                                        ],
+                                                      ),
                                                     ),
-                                                  ),
-                                                ],
+                                                  ],
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   ),
                                   SizedBox(
@@ -2103,7 +2360,6 @@ class _MyHomePageState extends State<MyHomePage> {
               );
             } else {
               if (snapshot.connectionState == ConnectionState.done) {
-                addDataSkill();
                 return SingleChildScrollView(
                   child: Column(
                     children: [
@@ -2150,12 +2406,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   ),
                                   SizedBox(height: 20),
                                   ElevatedButton.icon(
-                                    onPressed: () {
-                                      Databaseservice(
-                                              userID: FirebaseAuth
-                                                  .instance.currentUser!.uid)
-                                          .addTest("kontol");
-                                    },
+                                    onPressed: () {},
                                     label: Text('Get Started'),
                                     icon: Icon(Icons.arrow_forward_rounded),
                                     style: ElevatedButton.styleFrom(
@@ -3457,4 +3708,22 @@ class SkillContainer extends StatelessWidget {
       ),
     );
   }
+}
+
+class DashboardItem {
+  final bool berbutton;
+  final String imagePath;
+  final String title;
+  final String count;
+  final Color color;
+  final Icon? icon;
+
+  DashboardItem({
+    required this.berbutton,
+    required this.imagePath,
+    required this.icon,
+    required this.title,
+    required this.count,
+    required this.color,
+  });
 }

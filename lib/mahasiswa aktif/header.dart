@@ -1,9 +1,11 @@
 // custom_app_bar.dart
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:skripsi/ecek.dart';
-import 'package:skripsi/edit.dart';
-import 'package:skripsi/homepage.dart';
+import 'package:skripsi/mahasiswa%20aktif/ecek.dart';
+import 'package:skripsi/mahasiswa%20aktif/edit.dart';
+import 'package:skripsi/mahasiswa%20aktif/homepage.dart';
 import 'package:skripsi/landingpage.dart';
 
 import 'package:pdf/widgets.dart' as pw;
@@ -11,8 +13,8 @@ import 'package:printing/printing.dart';
 import 'package:flutter/services.dart' show Uint8List, rootBundle;
 import 'package:pdf/pdf.dart' as pw;
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:skripsi/templateCV.dart';
 import 'package:http/http.dart' as http;
+import 'package:skripsi/registrasiTracerStudy.dart';
 
 class experienceComponents {
   String jobDescription = "";
@@ -20,6 +22,26 @@ class experienceComponents {
   String nameOfInstitution = "";
   String positionTitle = "";
   String year = "";
+}
+
+class achievementComponents {
+  String deskripsi = "";
+  String linkDocument = "";
+  String nameOfCompetition = "";
+  String ranking = "";
+  String year = "";
+}
+
+class experience {
+  String? description;
+  String? year;
+  String? institution;
+}
+
+class achievement {
+  String? description;
+  String? year;
+  String? Competition;
 }
 
 class header extends StatelessWidget implements PreferredSizeWidget {
@@ -40,8 +62,35 @@ class header extends StatelessWidget implements PreferredSizeWidget {
     String twiter = "";
     String email = "";
     String whatsapp = "";
+    List<experience> experienceDataUser = [];
+    List<achievement> achievementDataUser = [];
+
     final pdf = pw.Document();
     var image;
+
+    FilePickerResult? filePilihan;
+    Reference? ref;
+    UploadTask? uploadTask;
+    bool EditisUpload = true;
+    String? urlImageUpload;
+    UploadGambar() async {
+      //cek data lagak that
+      try {
+        //upload ke firebase storage
+        ref = FirebaseStorage.instance
+            .ref()
+            .child('gambar')
+            .child('/' + filePilihan!.files.first.name);
+
+        final metadata = SettableMetadata(contentType: 'image/jpeg');
+
+        uploadTask = ref!.putData(filePilihan!.files.first.bytes!, metadata);
+
+        await uploadTask!.whenComplete(() => null);
+      } on FirebaseException catch (e) {
+        print(e);
+      }
+    }
 
     getDataBiodata() async {
       await FirebaseFirestore.instance
@@ -62,23 +111,54 @@ class header extends StatelessWidget implements PreferredSizeWidget {
           whatsapp = value['noHandphone'];
         },
       );
+      await FirebaseFirestore.instance
+          .collection("User")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection("experience")
+          .get()
+          .then(
+        (value) {
+          value.docs.forEach(
+            (element) {
+              experienceDataUser.add(experience());
+              experienceDataUser[experienceDataUser.length - 1].year =
+                  element['year'];
+              experienceDataUser[experienceDataUser.length - 1].institution =
+                  element['name of institution'];
+              experienceDataUser[experienceDataUser.length - 1].description =
+                  element['job description'];
+            },
+          );
+        },
+      );
+
+      await FirebaseFirestore.instance
+          .collection("User")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection("achievement")
+          .get()
+          .then(
+        (value) {
+          value.docs.forEach(
+            (element) {
+              achievementDataUser.add(achievement());
+              achievementDataUser[achievementDataUser.length - 1].year =
+                  element['year'];
+              achievementDataUser[achievementDataUser.length - 1].Competition =
+                  element['name of Competition'];
+              achievementDataUser[achievementDataUser.length - 1].description =
+                  element['description'];
+            },
+          );
+        },
+      );
     }
 
     downloadPdfBoss() async {
       await getDataBiodata();
-      // URL gambar yang ingin Anda masukkan
-    final imageUrl = 'https://cdn1-production-images-kly.akamaized.net/7S1xszhXETmiMGOofkrebqoHKnE=/1200x900/smart/filters:quality(75):strip_icc():format(webp)/kly-media-production/medias/1439641/original/042027300_1482131661-reddit.jpg';
-
-    // Download gambar dari URL
-    final response = await http.get(Uri.parse(imageUrl));
-    print("komtol");
-      final Uint8List imageData = response.bodyBytes;
-    print("komtol");
-
-      // Convert image data to PdfImage
-      final image = pw.MemoryImage(imageData);
-    print("komtol");
-
+      final pdf = pw.Document();
+      final image =
+          (await rootBundle.load('assets/foto.jpg')).buffer.asUint8List();
       pdf.addPage(pw.Page(
         build: (context) {
           return pw.Builder(
@@ -90,7 +170,7 @@ class header extends StatelessWidget implements PreferredSizeWidget {
                       pw.Container(
                         width: 80,
                         height: 80,
-                        child: pw.Image(image),
+                        child: pw.Image(pw.MemoryImage(image)),
                       ),
                       pw.SizedBox(width: 16.0),
                       pw.Column(
@@ -121,44 +201,29 @@ class header extends StatelessWidget implements PreferredSizeWidget {
                   pw.SizedBox(height: 15.0),
                   _pdfSectionTitle('EXPERIENCE'),
                   pw.Divider(thickness: 2, color: pw.PdfColors.blueGrey900),
-                  _pdfExperienceEntry(
-                    'Mechatronics Engineer, Borcelle Technologies',
-                    'Jan 2023 - Present',
-                    'In 2020, I participated in an internship program at XYZ Company, a leading tech firm renowned for its innovative solutions. was immersed in various projects related to software development and data.',
-                  ),
-                  _pdfExperienceEntry(
-                    'System Engineer, Arrowai Industries',
-                    'Feb 2021 - Dec 2022',
-                    'Designed and optimized a robotic control system, realizing a 10% performance improvement. Coordinated testing and validation, ensuring compliance with industry standards.',
-                  ),
-                  _pdfExperienceEntry(
-                    'Junior Project Engineer, Salford & Co Manufacturing',
-                    'Mar 2020 - Jan 2021',
-                    'Managed full lifecycle of a cutting-edge automation project, meeting all milestones. Conducted feasibility studies and risk assessments, mitigating potential project risks.',
-                  ),
-                  _pdfExperienceEntry(
-                    'Junior Project Engineer, Salford & Co Manufacturing',
-                    'Mar 2020 - Jan 2021',
-                    'Managed full lifecycle of a cutting-edge automation project, meeting all milestones. Conducted feasibility studies and risk assessments, mitigating potential project risks.',
-                  ),
+                  for (int i = 0;
+                      experienceDataUser.length >= 4
+                          ? i < 4
+                          : i < experienceDataUser.length;
+                      i++)
+                    _pdfExperienceEntry(
+                      experienceDataUser[i].institution!,
+                      experienceDataUser[i].year!,
+                      experienceDataUser[i].description!,
+                    ),
                   pw.SizedBox(height: 15.0),
                   _pdfSectionTitle('ACHIEVEMENT'),
                   pw.Divider(thickness: 2, color: pw.PdfColors.blueGrey900),
-                  _pdfAchievementEntry(
-                    'Bachelor of Mechatronics Engineering with Honours',
-                    'Aug 2016 - Oct 2019',
-                    'In 2020, I emerged as the champion of the National Debate Competition, showcasing my prowess in critical thinking and effective communication.',
-                  ),
-                  _pdfAchievementEntry(
-                    'Bachelor of Mechatronics Engineering with Honours',
-                    'Aug 2016 - Oct 2019',
-                    'In 2020, I emerged as the champion of the National Debate Competition, showcasing my prowess in critical thinking and effective communication.',
-                  ),
-                  _pdfAchievementEntry(
-                    'Bachelor of Mechatronics Engineering with Honours',
-                    'Aug 2016 - Oct 2019',
-                    'In 2020, I emerged as the champion of the National Debate Competition, showcasing my prowess in critical thinking and effective communication.',
-                  ),
+                  for (int i = 0;
+                      achievementDataUser.length >= 3
+                          ? i < 3
+                          : i < achievementDataUser.length;
+                      i++)
+                    _pdfAchievementEntry(
+                      achievementDataUser[i].Competition!,
+                      achievementDataUser[i].year!,
+                      achievementDataUser[i].description!,
+                    ),
                   pw.SizedBox(height: 20.0),
                   _pdfSectionTitle('ADDITIONAL INFORMATION'),
                   pw.Divider(thickness: 2, color: pw.PdfColors.blueGrey900),
@@ -184,6 +249,18 @@ class header extends StatelessWidget implements PreferredSizeWidget {
       await Printing.sharePdf(bytes: await pdf.save(), filename: 'resume.pdf');
     }
 
+    Future<bool> cekStatusTinjauanTracerStudy() async {
+      bool x = false;
+      await FirebaseFirestore.instance
+          .collection("User")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get()
+          .then((onValue) {
+        x = onValue['tracerStudySedangDitinjau'];
+      });
+      return x;
+    }
+
     return AppBar(
       toolbarHeight: 65,
       backgroundColor: Colors.white,
@@ -205,7 +282,7 @@ class header extends StatelessWidget implements PreferredSizeWidget {
         TextButton(
           onPressed: () {
             Navigator.push(
-                context, MaterialPageRoute(builder: (context) => homepage()));
+                context, MaterialPageRoute(builder: (context) => Homepage_mahasiswa()));
           },
           child: Text('Homepage', style: TextStyle(color: Colors.black)),
         ),
@@ -228,6 +305,33 @@ class header extends StatelessWidget implements PreferredSizeWidget {
             await downloadPdfBoss(); // Panggil fungsi downloadPDF
           },
           child: Text('Download CV', style: TextStyle(color: Colors.black)),
+        ),
+        TextButton(
+          onPressed: () async {
+            print(await cekStatusTinjauanTracerStudy());
+            if (await cekStatusTinjauanTracerStudy()) {
+              showDialog(context: context, builder: (builder){
+                return SimpleDialog(
+                  children: [
+                    Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text("Pengajuan Anda Sedang Ditinjau Oleh Admin Prodi", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),),
+                          SizedBox(height: 25,),
+                          Text("Lakukan Refresh Page Untuk Mengecek Update Status"),
+                        ],
+                      ),
+                    )
+                  ],
+                );
+              });
+            } else {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => tracerStudy()));
+            }
+          },
+          child: Text('Tracer Study', style: TextStyle(color: Colors.black)),
         ),
         TextButton(
           onPressed: () async {

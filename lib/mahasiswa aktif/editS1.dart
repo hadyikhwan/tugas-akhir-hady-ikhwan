@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 import 'package:skripsi/firestore%20service/DatabaseService.dart';
+import 'package:skripsi/mahasiswa%20aktif/homepage.dart';
 
 class EditS1 extends StatelessWidget {
   const EditS1({super.key});
@@ -69,6 +70,9 @@ class _FormPageState extends State<FormPage> {
     _nameController.text =
         await Databaseservice(userID: FirebaseAuth.instance.currentUser!.uid)
             .getDataUsername();
+      _emailController.text = 
+        await Databaseservice(userID: FirebaseAuth.instance.currentUser!.uid)
+            .getDataEmail();
   }
 
   bool isfirst = false;

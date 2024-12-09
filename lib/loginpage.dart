@@ -1,8 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:skripsi/homepage.dart';
-import 'package:skripsi/homepage_admin.dart';
-import 'package:skripsi/signup.dart';
+import 'package:skripsi/alumni/homepage_alumni.dart';
+import 'package:skripsi/mahasiswa%20aktif/homepage.dart';
+import 'package:skripsi/admin/homepage_admin.dart';
 import 'package:skripsi/signup.dart'; // Import the SignUpPage
 
 class LoginPage extends StatefulWidget {
@@ -12,19 +13,31 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
+bool isAlumni = false;
+
 Future<bool> login(String email, String password) async {
   try {
     User? user = (await FirebaseAuth.instance
             .signInWithEmailAndPassword(email: email, password: password))
         .user;
     if (user != null) {
-      print("login berhasil");
+      await cekAdmin();
       return true;
     }
   } on FirebaseAuthException catch (e) {
     print(e.message);
   }
   return false;
+}
+
+Future cekAdmin() async {
+  await FirebaseFirestore.instance
+      .collection("User")
+      .doc(FirebaseAuth.instance.currentUser!.uid)
+      .get()
+      .then((onValue) {
+    isAlumni = onValue['Alumni'];
+  });
 }
 
 class _LoginPageState extends State<LoginPage> {
@@ -34,12 +47,19 @@ class _LoginPageState extends State<LoginPage> {
   void _login() async {
     bool success = await login(emailData.text, passwordData.text);
     if (success) {
-      if (emailData.text == "Admin@admin.com") {
+      if (emailData.text.toLowerCase() == "admin@admin.com") {
+        // ScaffoldMessenger.of(context)
+          // .showSnackBar(SnackBar(content: Text('ini admin oi')));
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => homepageadmin()));
       } else {
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => homepage()));
+        if (isAlumni) {
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => HomepageAlumni()));
+        } else {
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => Homepage_mahasiswa()));
+        }
       }
     } else {
       ScaffoldMessenger.of(context)
@@ -50,7 +70,7 @@ class _LoginPageState extends State<LoginPage> {
   void _signUp() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => Signup()),
+      MaterialPageRoute(builder: (context) => SignUp()),
     );
   }
 
@@ -174,7 +194,7 @@ class _LoginPageState extends State<LoginPage> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => Signup()));
+                                  builder: (context) => SignUp()));
                         },
                         child: Container(
                           width: MediaQuery.of(context).size.width,

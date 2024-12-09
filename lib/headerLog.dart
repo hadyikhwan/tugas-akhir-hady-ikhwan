@@ -1,10 +1,10 @@
 // custom_app_bar.dart
 import 'package:flutter/material.dart';
-import 'package:skripsi/ecek.dart';
-import 'package:skripsi/edit.dart';
-import 'package:skripsi/homepage.dart';
+import 'package:skripsi/mahasiswa%20aktif/ecek.dart';
+import 'package:skripsi/mahasiswa%20aktif/edit.dart';
+import 'package:skripsi/mahasiswa%20aktif/homepage.dart';
 import 'package:skripsi/loginpage.dart';
-import 'templateCV.dart';
+import 'package:skripsi/pilihanlogin.dart';
 
 class headerlog extends StatelessWidget implements PreferredSizeWidget {
   const headerlog({super.key});

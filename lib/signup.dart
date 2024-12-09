@@ -4,14 +4,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:skripsi/firestore%20service/DatabaseService.dart';
-import 'package:skripsi/homepage.dart';
+import 'package:skripsi/mahasiswa%20aktif/ecek.dart';
+import 'package:skripsi/mahasiswa%20aktif/homepage.dart';
 import 'package:skripsi/loginpage.dart';
 
-class Signup extends StatefulWidget {
-  const Signup({super.key});
+class SignUp extends StatefulWidget {
+  const SignUp({super.key});
 
   @override
-  State<Signup> createState() => _SignupState();
+  State<SignUp> createState() => _SignUpState();
 }
 
 String checkString(String data) {
@@ -30,14 +31,16 @@ String checkString(String data) {
   return hasilFilter;
 }
 
-class _SignupState extends State<Signup> {
+class _SignUpState extends State<SignUp> {
   String emailUIN = "@student.ar-raniry.ac.id";
   TextEditingController namaData = new TextEditingController();
   TextEditingController emailData = new TextEditingController();
   TextEditingController passwordData = new TextEditingController();
-  bool projectBelumSiap = true;
+  TextEditingController nimData = new TextEditingController();
+  bool projectBelumSiap = false;
+  String pesanError = "";
 
-  Future signUp(String a, String b) async {
+  Future SignupAlumni(String a, String b, String nim, String nama, String email) async {
     if (!projectBelumSiap) {
       if (namaData.text != "" &&
           emailData.text != "" &&
@@ -52,7 +55,7 @@ class _SignupState extends State<Signup> {
             //add username
             await Databaseservice(
                     userID: FirebaseAuth.instance.currentUser!.uid)
-                .addNamaUser(namaData.text);
+                .addNamaUser(nama, nim, email);
 
             if (x != null) {
               await FirebaseAuth.instance.signOut();
@@ -60,7 +63,7 @@ class _SignupState extends State<Signup> {
               return true;
             }
           } on FirebaseAuthException catch (e) {
-            print(e.message);
+            pesanError = e.message.toString();
           }
           return false;
         } else {
@@ -71,39 +74,38 @@ class _SignupState extends State<Signup> {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Please fill all form')));
       }
-    }else {
-       try {
-            //add new account
-            User x = (await FirebaseAuth.instance
-                    .createUserWithEmailAndPassword(email: a, password: b))
-                .user!;
+    } else {
+      try {
+        //add new account
+        User x = (await FirebaseAuth.instance
+                .createUserWithEmailAndPassword(email: a, password: b))
+            .user!;
 
-            //add username
-            await Databaseservice(
-                    userID: FirebaseAuth.instance.currentUser!.uid)
-                .addNamaUser(namaData.text);
+        //add username
+        await Databaseservice(userID: FirebaseAuth.instance.currentUser!.uid)
+            .addNamaUser(nama, nim, email);
 
-            if (x != null) {
-              await FirebaseAuth.instance.signOut();
-              print("Sign up berhasil");
-              return true;
-            }
-          } on FirebaseAuthException catch (e) {
-            print(e.message);
-          }
-          return false;
-        
+        if (x != null) {
+          await FirebaseAuth.instance.signOut();
+          print("Sign up berhasil");
+          return true;
+        }
+      } on FirebaseAuthException catch (e) {
+        print(e.message);
+      }
+      return false;
     }
   }
 
-  void _signUp() async {
-    bool success = await signUp(emailData.text, passwordData.text);
+  void _SignupAlumni(String namaUser, String Nim, String Email) async {
+    bool success = await SignupAlumni(
+        emailData.text, passwordData.text, Nim, namaUser, email);
     if (success) {
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => LoginPage()));
     } else {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Sign Up failed')));
+          .showSnackBar(SnackBar(content: Text(pesanError), duration: Duration(microseconds: 100),));
     }
   }
 
@@ -125,12 +127,30 @@ class _SignupState extends State<Signup> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.asset(
-                      "assets/welcome.png",
-                      width: 300,
-                    ),
                     SizedBox(
                       height: 30,
+                    ),
+                    TextField(
+                      controller: nimData,
+                      decoration: InputDecoration(
+                          enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: const Color.fromARGB(
+                                      255, 125, 154, 225))),
+                          focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: const Color.fromARGB(
+                                      255, 125, 154, 225))),
+                          border: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: const Color.fromARGB(
+                                      255, 125, 154, 225))),
+                          hintText: "NIM",
+                          hintStyle: TextStyle(
+                              color: const Color.fromARGB(255, 125, 154, 225))),
+                    ),
+                    SizedBox(
+                      height: 10,
                     ),
                     TextField(
                       controller: namaData,
@@ -152,7 +172,7 @@ class _SignupState extends State<Signup> {
                               color: const Color.fromARGB(255, 125, 154, 225))),
                     ),
                     SizedBox(
-                      height: 20,
+                      height: 10,
                     ),
                     TextField(
                       controller: emailData,
@@ -174,7 +194,7 @@ class _SignupState extends State<Signup> {
                               color: const Color.fromARGB(255, 125, 154, 225))),
                     ),
                     SizedBox(
-                      height: 20,
+                      height: 10,
                     ),
                     TextField(
                       controller: passwordData,
@@ -196,10 +216,11 @@ class _SignupState extends State<Signup> {
                           hintStyle: TextStyle(
                               color: const Color.fromARGB(255, 125, 154, 225))),
                     ),
-                    SizedBox(height: 10),
+                    SizedBox(height: 25),
                     GestureDetector(
                       onTap: () async {
-                        _signUp();
+                        _SignupAlumni(
+                            namaData.text, nimData.text, emailData.text);
                       },
                       child: Container(
                         width: MediaQuery.of(context).size.width,
